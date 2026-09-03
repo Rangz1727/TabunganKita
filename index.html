@@ -81,13 +81,17 @@
         </div>
 
         <!-- Histori -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm">
-            <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
-            <div id="listHistori" class="space-y-3">
-                <p class="text-xs text-slate-400 text-center py-4">Memuat data...</p>
-            </div>
-        </div>
+<div class="bg-white rounded-2xl p-5 shadow-sm">
+    <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
+    
+    <!-- Indikator Loading -->
+    <div id="loadingIndicator" class="text-center py-6">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+        <p class="text-xs text-slate-400 mt-2">Memuat data terbaru...</p>
     </div>
+
+    <div id="listHistori" class="space-y-3"></div>
+</div>
 
     <!-- MODAL KAMERA -->
     <div id="modalKamera" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
@@ -266,71 +270,72 @@
         }
 
         async function ambilData() {
-            try {
-                const res = await fetch(WEB_APP_URL);
-                const data = await res.json();
-                
-                const list = document.getElementById('listHistori');
-                let tBersama = 0, tKamu = 0, tPacar = 0;
+    try {
+        const res = await fetch(WEB_APP_URL);
+        const data = await res.json();
+        
+        const list = document.getElementById('listHistori');
+        let tBersama = 0, tKamu = 0, tPacar = 0;
 
-                if (!data || data.length === 0) {
-                    list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
-                    document.getElementById('saldoBersama').innerText = `Rp 0`;
-                    document.getElementById('saldoKamu').innerText = `Rp 0`;
-                    document.getElementById('saldoPacar').innerText = `Rp 0`;
-                    return;
-                }
-
-                list.innerHTML = '';
-                data.slice().reverse().forEach(item => {
-                    const nom = Number(item.nominal) || 0;
-                    
-                    let namaUser = (item.namaUser && item.namaUser !== "undefined") ? String(item.namaUser).trim().toUpperCase() : 'LEA';
-                    if (namaUser === "") namaUser = 'LEA';
-
-                    const kategori = item.kategoriDompet ? String(item.kategoriDompet).trim().toLowerCase() : 'bersama';
-                    const jenis = item.jenisTransaksi ? String(item.jenisTransaksi).trim().toLowerCase() : 'masuk';
-                    const catatan = item.catatan || '-';
-                    const tanggal = item.tanggal || '-';
-                    
-                    if (kategori === 'bersama') {
-                        if (jenis === 'masuk') tBersama += nom; 
-                        else tBersama -= nom;
-                    } else if (kategori === 'pribadi') {
-                        // DIPERBAIKI: Menggunakan .includes('MELATI') agar aman dari variasi huruf besar/kecil di Google Sheets
-                        if (namaUser.includes('MELATI')) {
-                            if (jenis === 'masuk') tPacar += nom; 
-                            else tPacar -= nom;
-                        } else {
-                            if (jenis === 'masuk') tKamu += nom; 
-                            else tKamu -= nom;
-                        }
-                    }
-
-                    const badge = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
-                    const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
-                    const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
-
-                    list.innerHTML += `
-                        <div class="flex items-center justify-between border-b pb-3 py-1">
-                            <div>
-                                <div class="flex items-center gap-1.5">
-                                    <p class="text-sm font-bold text-slate-700">${namaUser}</p>
-                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
-                                </div>
-                                <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
-                            </div>
-                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
-                        </div>`;
-                });
-
-                document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
-                document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
-                document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
-            } catch (e) {
-                document.getElementById('listHistori').innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
-            }
+        if (!data || data.length === 0) {
+            list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
+            document.getElementById('saldoBersama').innerText = `Rp 0`;
+            document.getElementById('saldoKamu').innerText = `Rp 0`;
+            document.getElementById('saldoPacar').innerText = `Rp 0`;
+            return;
         }
+
+        list.innerHTML = '';
+        data.slice().reverse().forEach(item => {
+            const nom = Number(item.nominal) || 0;
+            
+            // Mencegah error jika penulisan di Google Sheets berbeda (misal pakai spasi atau huruf kapital)
+            let rawNama = item.namaUser || item["Nama User"] || item.nama || 'LEA';
+            let namaUser = String(rawNama).trim().toUpperCase();
+            if (namaUser === "" || namaUser === "UNDEFINED") namaUser = 'LEA';
+
+            const kategori = item.kategoriDompet ? String(item.kategoriDompet).trim().toLowerCase() : 'bersama';
+            const jenis = item.jenisTransaksi ? String(item.jenisTransaksi).trim().toLowerCase() : 'masuk';
+            const catatan = item.catatan || '-';
+            const tanggal = item.tanggal || '-';
+            
+            if (kategori === 'bersama') {
+                if (jenis === 'masuk') tBersama += nom; 
+                else tBersama -= nom;
+            } else if (kategori === 'pribadi') {
+                if (namaUser.includes('MELATI')) {
+                    if (jenis === 'masuk') tPacar += nom; 
+                    else tPacar -= nom;
+                } else {
+                    if (jenis === 'masuk') tKamu += nom; 
+                    else tKamu -= nom;
+                }
+            }
+
+            const badge = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
+            const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
+            const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
+
+            list.innerHTML += `
+                <div class="flex items-center justify-between border-b pb-3 py-1">
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <p class="text-sm font-bold text-slate-700">${namaUser}</p>
+                            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
+                        </div>
+                        <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
+                    </div>
+                    <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
+                </div>`;
+        });
+
+        document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
+        document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
+        document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
+    } catch (e) {
+        document.getElementById('listHistori').innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
+    }
+}
     </script>
 </body>
 </html>
