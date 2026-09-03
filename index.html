@@ -191,9 +191,7 @@
             canvas.height = video.videoHeight;
             
             const ctx = canvas.getContext('2d');
-            // Balikkan posisi canvas secara horizontal agar hasil jepretan tidak mirror (sesuai tampilan video)
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
+            // DIPERBAIKI: Mengambil gambar secara normal tanpa scale ganda agar hasil jepretan tidak mirror
             ctx.drawImage(video, 0, 0);
             
             canvas.toBlob((blob) => {
@@ -299,7 +297,8 @@
                         if (jenis === 'masuk') tBersama += nom; 
                         else tBersama -= nom;
                     } else if (kategori === 'pribadi') {
-                        if (namaUser === 'MELATI') {
+                        // DIPERBAIKI: Menggunakan .includes('MELATI') agar aman dari variasi huruf besar/kecil di Google Sheets
+                        if (namaUser.includes('MELATI')) {
                             if (jenis === 'masuk') tPacar += nom; 
                             else tPacar -= nom;
                         } else {
