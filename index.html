@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabungan Kita & Pribadi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* CSS agar preview kamera dan hasil jepretan tidak mirror */
+        #videoElement, #imgPreview {
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+
+    <div class="max-w-md mx-auto p-4 sm:p-6 pb-20">
+        <header class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-indigo-600">💰 Tabungan Kita</h1>
+            <p class="text-sm text-slate-500">Semangat Nabungnya</p>
+        </header>
+
+        <!-- Kartu Saldo -->
+        <div class="space-y-3 mb-6">
+            <div class="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-2xl p-4 text-white shadow-lg">
+                <p class="text-xs uppercase tracking-wider opacity-80">Saldo Bersama</p>
+                <h2 id="saldoBersama" class="text-2xl font-extrabold mt-1">Rp 0</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                    <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: LEA</p>
+                    <h3 id="saldoKamu" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                    <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: MELATI</p>
+                    <h3 id="saldoPacar" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
+            <h3 class="font-bold text-slate-700 mb-4">Catat Transaksi Baru</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Siapa yang transaksi?</label>
+                    <select id="namaUser" class="w-full border rounded-xl p-2.5 text-sm bg-white">
+                        <option value="" disabled selected>-- Pilih yang transaksi --</option>
+                        <option value="LEA">LEA</option>
+                        <option value="MELATI">MELATI</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori Dompet</label>
+                    <select id="kategoriDompet" class="w-full border rounded-xl p-2.5 text-sm bg-white">
+                        <option value="" disabled selected>-- Pilih kategori dompet --</option>
+                        <option value="bersama">Tabungan Bersama</option>
+                        <option value="pribadi">Tabungan Pribadi (Sesuai nama di atas)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Jenis Transaksi</label>
+                    <select id="jenisTransaksi" class="w-full border rounded-xl p-2.5 text-sm bg-white">
+                        <option value="" disabled selected>-- Pilih jenis transaksi --</option>
+                        <option value="masuk">Tambah Saldo (+)</option>
+                        <option value="keluar">Kurang Saldo (-)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal (Rp)</label>
+                    <input type="text" id="nominal" placeholder="Contoh: 50.000" oninput="formatInputNominal(this)" class="w-full border rounded-xl p-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan</label>
+                    <input type="text" id="catatan" placeholder="Misal: Nabung / Beli jajan" class="w-full border rounded-xl p-2.5 text-sm">
+                </div>
+                <button onclick="bukaKamera()" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow hover:bg-indigo-700 transition">
+                    📸 Ambil Foto Verifikasi Muka
+                </button>
+            </div>
+        </div>
+
+        <!-- Histori -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
+            <div id="listHistori" class="space-y-3">
+                <p class="text-xs text-slate-400 text-center py-4">Memuat data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KAMERA -->
+    <div id="modalKamera" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 flex flex-col max-h-[90vh]">
+            <div class="text-center mb-3 flex-shrink-0">
+                <h3 class="font-bold text-lg text-slate-700">Verifikasi Muka</h3>
+            </div>
+            <div class="overflow-y-auto flex-grow space-y-3 pr-1 mb-4">
+                <div id="videoContainer" class="relative rounded-xl overflow-hidden bg-black aspect-square w-full">
+                    <video id="videoElement" autoplay playsinline class="w-full h-full object-cover"></video>
+                    <canvas id="canvasElement" class="hidden"></canvas>
+                </div>
+                <div id="resultContainer" class="hidden">
+                    <img id="imgPreview" class="w-full aspect-square object-cover rounded-xl border">
+                </div>
+            </div>
+            <div class="flex gap-2 flex-shrink-0 pt-2 border-t">
+                <button onclick="tutupKamera()" class="flex-1 bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-semibold">Batal</button>
+                <button id="btnJepret" onclick="jepretFoto()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold">Jepret 📸</button>
+                <button id="btnSimpan" onclick="simpanTransaksi()" class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-semibold hidden">Simpan ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxmjYwK6qZrDkrmkafHEeUUHJd5-qEW5D6I2x96woKnSMbKCbAgHguJeI69vZOKRG2j/exec";
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1539151630543626273/nl6nxS0WPb1DH4uuyo-Yaov0dF5anNhxFLlBfdhfnKp6JQd8w9AZ-sthrH-9ngBKFbPC";
+
+        let streamKamera = null;
+        let fotoBlob = null;
+
+        window.onload = function() {
+            ambilData();
+        }
+
+        function formatInputNominal(input) {
+            let angka = input.value.replace(/[^,\d]/g, "").toString();
+            let split = angka.split(",");
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? "." : "";
+                rupiah += separator + ribuan.join(".");
+            }
+            input.value = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+        }
+
+        async function bukaKamera() {
+            const namaUser = document.getElementById('namaUser').value;
+            const kategoriDompet = document.getElementById('kategoriDompet').value;
+            const jenisTransaksi = document.getElementById('jenisTransaksi').value;
+
+            if (!namaUser) {
+                alert('Pilih dulu siapa yang transaksi!');
+                return;
+            }
+            if (!kategoriDompet) {
+                alert('Pilih dulu kategori dompetnya!');
+                return;
+            }
+            if (!jenisTransaksi) {
+                alert('Pilih dulu jenis transaksinya!');
+                return;
+            }
+
+            const inputNominalStr = document.getElementById('nominal').value;
+            const nominalBersih = parseFloat(inputNominalStr.replace(/\./g, '').replace(',', '.')) || 0;
+
+            if(nominalBersih <= 0) {
+                alert('Isi nominal dulu dengan benar!');
+                return;
+            }
+
+            document.getElementById('modalKamera').classList.remove('hidden');
+            document.getElementById('resultContainer').classList.add('hidden');
+            document.getElementById('videoContainer').classList.remove('hidden');
+            document.getElementById('btnJepret').classList.remove('hidden');
+            document.getElementById('btnSimpan').classList.add('hidden');
+
+            try {
+                streamKamera = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                document.getElementById('videoElement').srcObject = streamKamera;
+            } catch (err) {
+                alert('Gagal akses kamera!');
+                tutupKamera();
+            }
+        }
+
+        function tutupKamera() {
+            if (streamKamera) streamKamera.getTracks().forEach(t => t.stop());
+            document.getElementById('modalKamera').classList.add('hidden');
+            fotoBlob = null;
+        }
+
+        function jepretFoto() {
+            const video = document.getElementById('videoElement');
+            const canvas = document.getElementById('canvasElement');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            // Balikkan posisi canvas secara horizontal agar hasil jepretan tidak mirror (sesuai tampilan video)
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0);
+            
+            canvas.toBlob((blob) => {
+                fotoBlob = blob;
+                document.getElementById('imgPreview').src = URL.createObjectURL(blob);
+            }, 'image/png');
+
+            streamKamera.getTracks().forEach(t => t.stop());
+
+            document.getElementById('videoContainer').classList.add('hidden');
+            document.getElementById('resultContainer').classList.remove('hidden');
+            document.getElementById('btnJepret').classList.add('hidden');
+            document.getElementById('btnSimpan').classList.remove('hidden');
+        }
+
+        async function simpanTransaksi() {
+            const btnSimpan = document.getElementById('btnSimpan');
+            btnSimpan.innerText = "Menyimpan...";
+            btnSimpan.disabled = true;
+
+            const inputNominalStr = document.getElementById('nominal').value;
+            const nominalMurni = parseFloat(inputNominalStr.replace(/\./g, '').replace(',', '.')) || 0;
+            const namaUserVal = document.getElementById('namaUser').value;
+            const kategoriDompetVal = document.getElementById('kategoriDompet').value;
+            const jenisTransaksiVal = document.getElementById('jenisTransaksi').value;
+
+            const dataBaru = {
+                namaUser: namaUserVal,
+                kategoriDompet: kategoriDompetVal,
+                jenisTransaksi: jenisTransaksiVal,
+                nominal: nominalMurni,
+                catatan: document.getElementById('catatan').value || 'Tanpa catatan',
+                tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataBaru)
+                });
+
+                if (DISCORD_WEBHOOK_URL && DISCORD_WEBHOOK_URL !== "ISI_URL_WEBHOOK_DISCORD_KAMU_DI_SINI" && fotoBlob) {
+                    const formData = new FormData();
+                    const sign = dataBaru.jenisTransaksi === 'masuk' ? '+ Rp' : '- Rp';
+                    const dompetText = dataBaru.kategoriDompet === 'bersama' ? 'Tabungan Bersama' : `Tabungan Pribadi (${dataBaru.namaUser})`;
+                    
+                    formData.append("payload_json", JSON.stringify({ 
+                        content: `🔔 **TRANSAKSI BARU**\n📁 Dompet: ${dompetText}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
+                    }));
+                    formData.append("file", fotoBlob, "vermuk.png");
+
+                    await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: formData });
+                }
+
+                document.getElementById('namaUser').selectedIndex = 0;
+                document.getElementById('kategoriDompet').selectedIndex = 0;
+                document.getElementById('jenisTransaksi').selectedIndex = 0;
+                document.getElementById('nominal').value = '';
+                document.getElementById('catatan').value = '';
+                tutupKamera();
+                
+                setTimeout(ambilData, 1500);
+
+            } catch (error) {
+                alert("Gagal menyimpan data.");
+            } finally {
+                btnSimpan.innerText = "Simpan ✨";
+                btnSimpan.disabled = false;
+            }
+        }
+
+        async function ambilData() {
+            try {
+                const res = await fetch(WEB_APP_URL);
+                const data = await res.json();
+                
+                const list = document.getElementById('listHistori');
+                let tBersama = 0, tKamu = 0, tPacar = 0;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
+                    document.getElementById('saldoBersama').innerText = `Rp 0`;
+                    document.getElementById('saldoKamu').innerText = `Rp 0`;
+                    document.getElementById('saldoPacar').innerText = `Rp 0`;
+                    return;
+                }
+
+                list.innerHTML = '';
+                data.slice().reverse().forEach(item => {
+                    const nom = Number(item.nominal) || 0;
+                    
+                    let namaUser = (item.namaUser && item.namaUser !== "undefined") ? String(item.namaUser).trim().toUpperCase() : 'LEA';
+                    if (namaUser === "") namaUser = 'LEA';
+
+                    const kategori = item.kategoriDompet ? String(item.kategoriDompet).trim().toLowerCase() : 'bersama';
+                    const jenis = item.jenisTransaksi ? String(item.jenisTransaksi).trim().toLowerCase() : 'masuk';
+                    const catatan = item.catatan || '-';
+                    const tanggal = item.tanggal || '-';
+                    
+                    if (kategori === 'bersama') {
+                        if (jenis === 'masuk') tBersama += nom; 
+                        else tBersama -= nom;
+                    } else if (kategori === 'pribadi') {
+                        if (namaUser === 'MELATI') {
+                            if (jenis === 'masuk') tPacar += nom; 
+                            else tPacar -= nom;
+                        } else {
+                            if (jenis === 'masuk') tKamu += nom; 
+                            else tKamu -= nom;
+                        }
+                    }
+
+                    const badge = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
+                    const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
+                    const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
+
+                    list.innerHTML += `
+                        <div class="flex items-center justify-between border-b pb-3 py-1">
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-slate-700">${namaUser}</p>
+                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
+                                </div>
+                                <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
+                            </div>
+                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
+                        </div>`;
+                });
+
+                document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
+                document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
+                document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
+            } catch (e) {
+                document.getElementById('listHistori').innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
