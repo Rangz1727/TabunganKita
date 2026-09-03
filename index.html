@@ -14,6 +14,14 @@
 </head>
 <body class="bg-slate-100 min-h-screen font-sans text-slate-800">
 
+    <!-- OVERLAY LOADING FULLSCREEN DENGAN BLUR -->
+    <div id="fullLoadingOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex flex-col items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center space-y-3">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
+            <p class="text-sm font-semibold text-slate-700">Memuat Tabungan Kita...</p>
+        </div>
+    </div>
+
     <div class="max-w-md mx-auto p-4 sm:p-6 pb-20">
         <header class="text-center mb-6">
             <h1 class="text-2xl font-bold text-indigo-600">💰 Tabungan Kita</h1>
@@ -80,26 +88,12 @@
             </div>
         </div>
 
-       <!-- Histori -->
-<div class="bg-white rounded-2xl p-5 shadow-sm">
-    <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
-    
-    <!-- Indikator Loading -->
-    <div id="loadingIndicator" class="text-center py-6">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 mt-2">Memuat data terbaru...</p>
+        <!-- Histori -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
+            <div id="listHistori" class="space-y-3"></div>
+        </div>
     </div>
-
-    <div id="listHistori" class="space-y-3"></div>
-</div>
-    <!-- Indikator Loading -->
-    <div id="loadingIndicator" class="text-center py-6">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 mt-2">Memuat data terbaru...</p>
-    </div>
-
-    <div id="listHistori" class="space-y-3"></div>
-</div>
 
     <!-- MODAL KAMERA -->
     <div id="modalKamera" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
@@ -203,7 +197,6 @@
             canvas.height = video.videoHeight;
             
             const ctx = canvas.getContext('2d');
-            // DIPERBAIKI: Mengambil gambar secara normal tanpa scale ganda agar hasil jepretan tidak mirror
             ctx.drawImage(video, 0, 0);
             
             canvas.toBlob((blob) => {
@@ -278,81 +271,87 @@
         }
 
         async function ambilData() {
-    const loadingEl = document.getElementById('loadingIndicator');
-    const list = document.getElementById('listHistori');
-    
-    // Tampilkan loading saat mulai ambil data
-    if (loadingEl) loadingEl.classList.remove('hidden');
-    list.innerHTML = '';
-
-    try {
-        const res = await fetch(WEB_APP_URL);
-        const data = await res.json();
-        
-        let tBersama = 0, tKamu = 0, tPacar = 0;
-
-        // WAJIB: Sembunyikan loading begitu data selesai ditarik
-        if (loadingEl) loadingEl.classList.add('hidden');
-
-        if (!data || data.length === 0) {
-            list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
-            document.getElementById('saldoBersama').innerText = `Rp 0`;
-            document.getElementById('saldoKamu').innerText = `Rp 0`;
-            document.getElementById('saldoPacar').innerText = `Rp 0`;
-            return;
-        }
-
-        data.slice().reverse().forEach(item => {
-            const nom = Number(item.nominal) || 0;
+            const loadingOverlay = document.getElementById('fullLoadingOverlay');
+            const list = document.getElementById('listHistori');
             
-            let rawNama = item.namaUser || item["Nama User"] || item.nama || 'LEA';
-            let namaUser = String(rawNama).trim().toUpperCase();
-            if (namaUser === "" || namaUser === "UNDEFINED") namaUser = 'LEA';
-
-            const kategori = item.kategoriDompet ? String(item.kategoriDompet).trim().toLowerCase() : 'bersama';
-            const jenis = item.jenisTransaksi ? String(item.jenisTransaksi).trim().toLowerCase() : 'masuk';
-            const catatan = item.catatan || '-';
-            const tanggal = item.tanggal || '-';
-            
-            if (kategori === 'bersama') {
-                if (jenis === 'masuk') tBersama += nom; 
-                else tBersama -= nom;
-            } else if (kategori === 'pribadi') {
-                if (namaUser.includes('MELATI')) {
-                    if (jenis === 'masuk') tPacar += nom; 
-                    else tPacar -= nom;
-                } else {
-                    if (jenis === 'masuk') tKamu += nom; 
-                    else tKamu -= nom;
-                }
+            // Tampilkan layar blur & loading fullscreen
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('hidden');
             }
+            list.innerHTML = '';
 
-            const badge = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
-            const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
-            const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
+            try {
+                const res = await fetch(WEB_APP_URL);
+                const data = await res.json();
+                
+                let tBersama = 0, tKamu = 0, tPacar = 0;
 
-            list.innerHTML += `
-                <div class="flex items-center justify-between border-b pb-3 py-1">
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <p class="text-sm font-bold text-slate-700">${namaUser}</p>
-                            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
-                        </div>
-                        <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
-                    </div>
-                    <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
-                </div>`;
-        });
+                // Sembunyikan layar blur & loading begitu data sukses ditarik
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('hidden');
+                }
 
-        document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
-        document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
-        document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
-    } catch (e) {
-        // Sembunyikan juga jika terjadi error jaringan
-        if (loadingEl) loadingEl.classList.add('hidden');
-        list.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
-    }
-}
+                if (!data || data.length === 0) {
+                    list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
+                    document.getElementById('saldoBersama').innerText = `Rp 0`;
+                    document.getElementById('saldoKamu').innerText = `Rp 0`;
+                    document.getElementById('saldoPacar').innerText = `Rp 0`;
+                    return;
+                }
+
+                data.slice().reverse().forEach(item => {
+                    const nom = Number(item.nominal) || 0;
+                    
+                    let rawNama = item.namaUser || item["Nama User"] || item.nama || 'LEA';
+                    let namaUser = String(rawNama).trim().toUpperCase();
+                    if (namaUser === "" || namaUser === "UNDEFINED") namaUser = 'LEA';
+
+                    const kategori = item.kategoriDompet ? String(item.kategoriDompet).trim().toLowerCase() : 'bersama';
+                    const jenis = item.jenisTransaksi ? String(item.jenisTransaksi).trim().toLowerCase() : 'masuk';
+                    const catatan = item.catatan || '-';
+                    const tanggal = item.tanggal || '-';
+                    
+                    if (kategori === 'bersama') {
+                        if (jenis === 'masuk') tBersama += nom; 
+                        else tBersama -= nom;
+                    } else if (kategori === 'pribadi') {
+                        if (namaUser.includes('MELATI')) {
+                            if (jenis === 'masuk') tPacar += nom; 
+                            else tPacar -= nom;
+                        } else {
+                            if (jenis === 'masuk') tKamu += nom; 
+                            else tKamu -= nom;
+                        }
+                    }
+
+                    const badge = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
+                    const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
+                    const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
+
+                    list.innerHTML += `
+                        <div class="flex items-center justify-between border-b pb-3 py-1">
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-slate-700">${namaUser}</p>
+                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
+                                </div>
+                                <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
+                            </div>
+                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
+                        </div>`;
+                });
+
+                document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
+                document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
+                document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
+            } catch (e) {
+                // Sembunyikan juga jika terjadi error
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('hidden');
+                }
+                list.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
+            }
+        }
     </script>
 </body>
 </html>
