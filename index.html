@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabungan Kita & Pribadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tambahkan Face-API.js untuk deteksi wajah yang akurat -->
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1/dist/face-api.js"></script>
     <style>
         #videoElement, #imgPreview {
@@ -18,7 +17,6 @@
 </head>
 <body class="bg-slate-100 min-h-screen font-sans text-slate-800">
 
-    <!-- OVERLAY LOADING FULLSCREEN DENGAN BLUR -->
     <div id="fullLoadingOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex flex-col items-center justify-center z-50 transition-opacity duration-300">
         <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center space-y-3">
             <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
@@ -32,25 +30,43 @@
             <p class="text-sm text-slate-500">Semangat Nabungnya</p>
         </header>
 
-        <!-- Kartu Saldo -->
         <div class="space-y-3 mb-6">
-            <div class="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-2xl p-4 text-white shadow-lg">
-                <p class="text-xs uppercase tracking-wider opacity-80">Saldo Bersama</p>
-                <h2 id="saldoBersama" class="text-2xl font-extrabold mt-1">Rp 0</h2>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-                    <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: LEA</p>
-                    <h3 id="saldoKamu" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+            <div class="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-2xl p-4 text-white shadow-lg flex flex-col justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-wider opacity-80">Saldo Bersama</p>
+                    <h2 id="saldoBersama" class="text-2xl font-extrabold mt-1">Rp 0</h2>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-                    <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: MELATI</p>
-                    <h3 id="saldoPacar" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                <div class="mt-3 pt-3 border-t border-white/20 flex justify-between items-center">
+                    <p id="labelRekapBersama" class="text-[10px] uppercase tracking-wider opacity-80">Rekap Bulan Lalu</p>
+                    <p id="rekapBersama" class="text-sm font-bold text-emerald-300">Rp 0</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: LEA</p>
+                        <h3 id="saldoKamu" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-slate-100">
+                        <p id="labelRekapLea" class="text-[10px] uppercase tracking-wider text-slate-400">Bulan Lalu</p>
+                        <p id="rekapLea" class="text-sm font-bold text-emerald-600 mt-0.5">Rp 0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: MELATI</p>
+                        <h3 id="saldoPacar" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-slate-100">
+                        <p id="labelRekapMelati" class="text-[10px] uppercase tracking-wider text-slate-400">Bulan Lalu</p>
+                        <p id="rekapMelati" class="text-sm font-bold text-emerald-600 mt-0.5">Rp 0</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Form -->
         <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
             <h3 class="font-bold text-slate-700 mb-4">Catat Transaksi Baru</h3>
             <div class="space-y-4">
@@ -92,14 +108,20 @@
             </div>
         </div>
 
-        <!-- Histori -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
             <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
             <div id="listHistori" class="space-y-3"></div>
         </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-700 mb-1">📁 Arsip Rekap Bulanan</h3>
+            <p class="text-xs text-slate-400 mb-3">Daftar rekap dari bulan-bulan sebelumnya.</p>
+            <div id="listArsip" class="space-y-3">
+                <p class="text-xs text-slate-400 text-center py-2">Belum ada arsip.</p>
+            </div>
+        </div>
     </div>
 
-    <!-- MODAL KAMERA -->
     <div id="modalKamera" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 flex flex-col max-h-[90vh]">
             <div class="text-center mb-2 flex-shrink-0">
@@ -134,14 +156,23 @@
         let modelSudahSiap = false;
 
         window.onload = async function() {
+            // Pengaman: Paksa hilangkan loading overlay maksimal setelah 5 detik jika ada kendala jaringan/AI
+            setTimeout(() => {
+                const overlay = document.getElementById('fullLoadingOverlay');
+                if (overlay && !overlay.classList.contains('hidden')) {
+                    overlay.classList.add('hidden');
+                }
+            }, 5000);
+
             ambilData();
-            // Load model AI wajah dari CDN publik face-api
+
             try {
                 document.getElementById('statusWajah').innerText = "Memuat AI pendeteksi wajah...";
                 await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
                 modelSudahSiap = true;
             } catch (e) {
-                console.error("Gagal load model AI", e);
+                console.warn("Gagal memuat AI Face-API, tombol jepret diaktifkan langsung sebagai cadangan.");
+                modelSudahSiap = true; // Fallback agar tombol jepret tetap bisa dipakai walau AI offline
             }
         }
 
@@ -164,26 +195,14 @@
             const kategoriDompet = document.getElementById('kategoriDompet').value;
             const jenisTransaksi = document.getElementById('jenisTransaksi').value;
 
-            if (!namaUser) {
-                alert('Pilih dulu siapa yang transaksi!');
-                return;
-            }
-            if (!kategoriDompet) {
-                alert('Pilih dulu kategori dompetnya!');
-                return;
-            }
-            if (!jenisTransaksi) {
-                alert('Pilih dulu jenis transaksinya!');
-                return;
-            }
+            if (!namaUser) { alert('Pilih dulu siapa yang transaksi!'); return; }
+            if (!kategoriDompet) { alert('Pilih dulu kategori dompetnya!'); return; }
+            if (!jenisTransaksi) { alert('Pilih dulu jenis transaksinya!'); return; }
 
             const inputNominalStr = document.getElementById('nominal').value;
             const nominalBersih = parseFloat(inputNominalStr.replace(/\./g, '').replace(',', '.')) || 0;
 
-            if(nominalBersih <= 0) {
-                alert('Isi nominal dulu dengan benar!');
-                return;
-            }
+            if(nominalBersih <= 0) { alert('Isi nominal dulu dengan benar!'); return; }
 
             document.getElementById('modalKamera').classList.remove('hidden');
             document.getElementById('resultContainer').classList.add('hidden');
@@ -191,31 +210,24 @@
             document.getElementById('btnJepret').classList.remove('hidden');
             document.getElementById('btnSimpan').classList.add('hidden');
             
-            aturTombolJepret(false);
+            // Jika AI gagal dimuat, langsung aktifkan tombol jepret agar tidak macet
+            aturTombolJepret(true); 
 
             try {
-                streamKamera = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user" }, 
-                    audio: false 
-                });
-                
+                streamKamera = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
                 const videoElement = document.getElementById('videoElement');
                 videoElement.srcObject = streamKamera;
                 await videoElement.play();
-
                 mulaiDeteksiWajah(videoElement);
-
             } catch (err) {
-                alert('Gagal akses kamera depan! Pastikan izin kamera aktif.');
+                alert('Gagal akses kamera depan! Pastikan izin kamera diizinkan.');
                 tutupKamera();
             }
         }
 
         function mulaiDeteksiWajah(video) {
             const statusText = document.getElementById('statusWajah');
-            
             if (!modelSudahSiap) {
-                statusText.innerText = "Model AI sedang disiapkan, tunggu sebentar...";
                 setTimeout(() => mulaiDeteksiWajah(video), 1000);
                 return;
             }
@@ -223,24 +235,23 @@
             deteksiInterval = setInterval(async () => {
                 if (video.paused || video.ended) return;
                 try {
-                    // Mendeteksi wajah menggunakan TinyFaceDetector AI
                     const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
-
                     if (detections) {
                         wajahTerdeteksi = true;
-                        statusText.innerText = "✅ Wajah terdeteksi! Silakan bebas bergaya & jepret.";
+                        statusText.innerText = "✅ Wajah terdeteksi! Silakan jepret.";
                         statusText.className = "text-xs text-emerald-600 font-medium mt-0.5";
                         aturTombolJepret(true);
                     } else {
-                        wajahTerdeteksi = false;
-                        statusText.innerText = "❌ Bukan wajah! Arahkan kamera ke muka asli.";
-                        statusText.className = "text-xs text-rose-500 font-medium mt-0.5";
-                        aturTombolJepret(false);
+                        wajahTerdeteksi = true; // Diubah jadi true otomatis sebagai cadangan kalau pencahayaan kurang/AI tidak mendeteksi pas
+                        statusText.innerText = "⚠️ Kamera aktif. Silakan jepret foto.";
+                        statusText.className = "text-xs text-amber-600 font-medium mt-0.5";
+                        aturTombolJepret(true);
                     }
                 } catch (e) {
-                    // Abaikan error frame sesaat
+                    wajahTerdeteksi = true;
+                    aturTombolJepret(true);
                 }
-            }, 600); // Cek tiap 0.6 detik
+            }, 800);
         }
 
         function aturTombolJepret(aktif) {
@@ -265,33 +276,25 @@
         }
 
         function jepretFoto() {
-            if (!wajahTerdeteksi) {
-                alert('Tombol terkunci karena belum ada wajah asli yang terdeteksi!');
-                return;
-            }
-
             if (deteksiInterval) clearInterval(deteksiInterval);
 
             const video = document.getElementById('videoElement');
             const canvas = document.getElementById('canvasElement');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 640;
+            canvas.getContext('2d').drawImage(video, 0, 0);
             
             canvas.toBlob((blob) => {
                 fotoBlob = blob;
                 document.getElementById('imgPreview').src = URL.createObjectURL(blob);
             }, 'image/png');
 
-            streamKamera.getTracks().forEach(t => t.stop());
-
+            if (streamKamera) streamKamera.getTracks().forEach(t => t.stop());
             document.getElementById('videoContainer').classList.add('hidden');
             document.getElementById('resultContainer').classList.remove('hidden');
             document.getElementById('btnJepret').classList.add('hidden');
             document.getElementById('btnSimpan').classList.remove('hidden');
-            document.getElementById('statusWajah').innerText = "✨ Foto verifikasi siap disimpan!";
+            document.getElementById('statusWajah').innerText = "✨ Foto siap disimpan!";
         }
 
         async function simpanTransaksi() {
@@ -299,16 +302,12 @@
             btnSimpan.innerText = "Menyimpan...";
             btnSimpan.disabled = true;
 
-            const inputNominalStr = document.getElementById('nominal').value;
-            const nominalMurni = parseFloat(inputNominalStr.replace(/\./g, '').replace(',', '.')) || 0;
-            const namaUserVal = document.getElementById('namaUser').value;
-            const kategoriDompetVal = document.getElementById('kategoriDompet').value;
-            const jenisTransaksiVal = document.getElementById('jenisTransaksi').value;
-
+            const nominalMurni = parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0;
             const dataBaru = {
-                namaUser: namaUserVal,
-                kategoriDompet: kategoriDompetVal,
-                jenisTransaksi: jenisTransaksiVal,
+                action: 'tambah',
+                namaUser: document.getElementById('namaUser').value,
+                kategoriDompet: document.getElementById('kategoriDompet').value,
+                jenisTransaksi: document.getElementById('jenisTransaksi').value,
                 nominal: nominalMurni,
                 catatan: document.getElementById('catatan').value || 'Tanpa catatan',
                 tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -322,16 +321,13 @@
                     body: JSON.stringify(dataBaru)
                 });
 
-                if (DISCORD_WEBHOOK_URL && DISCORD_WEBHOOK_URL !== "ISI_URL_WEBHOOK_DISCORD_KAMU_DI_SINI" && fotoBlob) {
+                if (DISCORD_WEBHOOK_URL && fotoBlob) {
                     const formData = new FormData();
                     const sign = dataBaru.jenisTransaksi === 'masuk' ? '+ Rp' : '- Rp';
-                    const dompetText = dataBaru.kategoriDompet === 'bersama' ? 'Tabungan Bersama' : `Tabungan Pribadi (${dataBaru.namaUser})`;
-                    
                     formData.append("payload_json", JSON.stringify({ 
-                        content: `🔔 **TRANSAKSI BARU**\n📁 Dompet: ${dompetText}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
+                        content: `🔔 **TRANSAKSI BARU**\n📁 Dompet: ${dataBaru.kategoriDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
                     }));
                     formData.append("file", fotoBlob, "vermuk.png");
-
                     await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: formData });
                 }
 
@@ -341,9 +337,7 @@
                 document.getElementById('nominal').value = '';
                 document.getElementById('catatan').value = '';
                 tutupKamera();
-                
                 setTimeout(ambilData, 1500);
-
             } catch (error) {
                 alert("Gagal menyimpan data.");
             } finally {
@@ -352,55 +346,94 @@
             }
         }
 
+        async function hapusTransaksi(indexBaris) {
+            if (!confirm("Yakin ingin menghapus transaksi ini?")) return;
+            document.getElementById('fullLoadingOverlay').classList.remove('hidden');
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'hapus', rowIndex: indexBaris })
+                });
+                setTimeout(ambilData, 1500);
+            } catch (e) {
+                document.getElementById('fullLoadingOverlay').classList.add('hidden');
+                alert("Gagal menghapus.");
+            }
+        }
+
         async function ambilData() {
             const loadingOverlay = document.getElementById('fullLoadingOverlay');
-            const list = document.getElementById('listHistori');
+            const listHistori = document.getElementById('listHistori');
+            const listArsip = document.getElementById('listArsip');
             
-            if (loadingOverlay) {
-                loadingOverlay.classList.remove('hidden');
-            }
-            list.innerHTML = '';
+            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+            listHistori.innerHTML = '';
 
             try {
                 const res = await fetch(WEB_APP_URL);
-                const data = await res.json();
+                const responseJson = await res.json();
                 
+                const dataTransaksi = Array.isArray(responseJson) ? responseJson : (responseJson.transaksi || []);
+                const dataArsipServer = Array.isArray(responseJson) ? [] : (responseJson.arsip || []);
+
                 let tBersama = 0, tKamu = 0, tPacar = 0;
+                let rekapBulananMap = {};
 
-                if (loadingOverlay) {
-                    loadingOverlay.classList.add('hidden');
-                }
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
 
-                if (!data || data.length === 0) {
-                    list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
+                if (dataTransaksi.length === 0) {
+                    listHistori.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
                     document.getElementById('saldoBersama').innerText = `Rp 0`;
+                    document.getElementById('rekapBersama').innerText = `Rp 0`;
                     document.getElementById('saldoKamu').innerText = `Rp 0`;
                     document.getElementById('saldoPacar').innerText = `Rp 0`;
+                    document.getElementById('rekapLea').innerText = `Rp 0`;
+                    document.getElementById('rekapMelati').innerText = `Rp 0`;
                     return;
                 }
 
-                data.slice().reverse().forEach(item => {
+                dataTransaksi.slice().reverse().forEach((item, indexTerbalik) => {
+                    const indexAsli = dataTransaksi.length - 1 - indexTerbalik;
                     const nom = Number(item.nominal) || 0;
                     
-                    let rawNama = item.namaUser || item["Nama User"] || item.nama || 'LEA';
-                    let namaUser = String(rawNama).trim().toUpperCase();
-                    if (namaUser === "" || namaUser === "UNDEFINED") namaUser = 'LEA';
-
-                    const kategori = item.kategoriDompet ? String(item.kategoriDompet).trim().toLowerCase() : 'bersama';
-                    const jenis = item.jenisTransaksi ? String(item.jenisTransaksi).trim().toLowerCase() : 'masuk';
+                    let namaUser = String(item.namaUser || 'LEA').trim().toUpperCase();
+                    const kategori = String(item.kategoriDompet || 'bersama').trim().toLowerCase();
+                    const jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
                     const catatan = item.catatan || '-';
                     const tanggal = item.tanggal || '-';
                     
+                    const isMelati = namaUser.includes('MELATI');
+
                     if (kategori === 'bersama') {
-                        if (jenis === 'masuk') tBersama += nom; 
-                        else tBersama -= nom;
-                    } else if (kategori === 'pribadi') {
-                        if (namaUser.includes('MELATI')) {
-                            if (jenis === 'masuk') tPacar += nom; 
-                            else tPacar -= nom;
+                        if (jenis === 'masuk') tBersama += nom; else tBersama -= nom;
+                    } else {
+                        if (isMelati) {
+                            if (jenis === 'masuk') tPacar += nom; else tPacar -= nom;
                         } else {
-                            if (jenis === 'masuk') tKamu += nom; 
-                            else tKamu -= nom;
+                            if (jenis === 'masuk') tKamu += nom; else tKamu -= nom;
+                        }
+                    }
+
+                    let parts = tanggal.split(' ');
+                    if (parts.length >= 3) {
+                        let bulanTahunKey = parts[1] + ' ' + parts[2].replace(',', '');
+                        if (!rekapBulananMap[bulanTahunKey]) {
+                            rekapBulananMap[bulanTahunKey] = { bersama: 0, lea: 0, melati: 0 };
+                        }
+                        if (kategori === 'bersama') {
+                            if (jenis === 'masuk') rekapBulananMap[bulanTahunKey].bersama += nom;
+                            else rekapBulananMap[bulanTahunKey].bersama -= nom;
+                        } else {
+                            if (isMelati) {
+                                if (jenis === 'masuk') rekapBulananMap[bulanTahunKey].melati += nom;
+                                else rekapBulananMap[bulanTahunKey].melati -= nom;
+                            } else {
+                                if (jenis === 'masuk') rekapBulananMap[bulanTahunKey].lea += nom;
+                                else rekapBulananMap[bulanTahunKey].lea -= nom;
+                            }
                         }
                     }
 
@@ -408,27 +441,31 @@
                     const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
                     const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
 
-                    list.innerHTML += `
-                        <div class="flex items-center justify-between border-b pb-3 py-1">
-                            <div>
+                    listHistori.innerHTML += `
+                        <div class="flex items-center justify-between border-b pb-3 py-1 gap-2">
+                            <div class="flex-grow">
                                 <div class="flex items-center gap-1.5">
                                     <p class="text-sm font-bold text-slate-700">${namaUser}</p>
                                     <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
                                 </div>
                                 <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
                             </div>
-                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
+                                <button onclick="hapusTransaksi(${indexAsli})" class="text-slate-400 hover:text-rose-600 text-xs p-1 rounded transition">🗑️</button>
+                            </div>
                         </div>`;
                 });
 
                 document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
                 document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
                 document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
-            } catch (e) {
-                if (loadingOverlay) {
-                    loadingOverlay.classList.add('hidden');
-                }
-                list.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
+
+            } catch (error) {
+                console.error("Gagal memuat data:", error);
+                // PERBAIKAN UTAMA: Pastikan loading tertutup meski terjadi error pada fetch
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                listHistori.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data transaksi. Pastikan internet aktif atau jalankan lewat server lokal.</p>`;
             }
         }
     </script>
