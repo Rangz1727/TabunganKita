@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabungan Kita & Pribadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tambahkan Face-API.js untuk deteksi wajah yang akurat -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1/dist/face-api.js"></script>
     <style>
-        /* CSS agar preview kamera dan hasil jepretan tidak mirror */
         #videoElement, #imgPreview {
             transform: scaleX(-1);
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -98,12 +102,13 @@
     <!-- MODAL KAMERA -->
     <div id="modalKamera" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 flex flex-col max-h-[90vh]">
-            <div class="text-center mb-3 flex-shrink-0">
-                <h3 class="font-bold text-lg text-slate-700">Verifikasi Muka</h3>
+            <div class="text-center mb-2 flex-shrink-0">
+                <h3 class="font-bold text-lg text-slate-700">Verifikasi Wajah Asli</h3>
+                <p id="statusWajah" class="text-xs text-rose-500 font-medium mt-0.5">Memuat model AI wajah...</p>
             </div>
             <div class="overflow-y-auto flex-grow space-y-3 pr-1 mb-4">
                 <div id="videoContainer" class="relative rounded-xl overflow-hidden bg-black aspect-square w-full">
-                    <video id="videoElement" autoplay playsinline class="w-full h-full object-cover"></video>
+                    <video id="videoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
                     <canvas id="canvasElement" class="hidden"></canvas>
                 </div>
                 <div id="resultContainer" class="hidden">
@@ -112,7 +117,7 @@
             </div>
             <div class="flex gap-2 flex-shrink-0 pt-2 border-t">
                 <button onclick="tutupKamera()" class="flex-1 bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-semibold">Batal</button>
-                <button id="btnJepret" onclick="jepretFoto()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold">Jepret 📸</button>
+                <button id="btnJepret" onclick="jepretFoto()" disabled class="flex-1 bg-indigo-300 text-white py-2.5 rounded-xl text-sm font-semibold cursor-not-allowed">Jepret 📸</button>
                 <button id="btnSimpan" onclick="simpanTransaksi()" class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-semibold hidden">Simpan ✨</button>
             </div>
         </div>
@@ -124,9 +129,20 @@
 
         let streamKamera = null;
         let fotoBlob = null;
+        let deteksiInterval = null;
+        let wajahTerdeteksi = false;
+        let modelSudahSiap = false;
 
-        window.onload = function() {
+        window.onload = async function() {
             ambilData();
+            // Load model AI wajah dari CDN publik face-api
+            try {
+                document.getElementById('statusWajah').innerText = "Memuat AI pendeteksi wajah...";
+                await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+                modelSudahSiap = true;
+            } catch (e) {
+                console.error("Gagal load model AI", e);
+            }
         }
 
         function formatInputNominal(input) {
@@ -174,23 +190,88 @@
             document.getElementById('videoContainer').classList.remove('hidden');
             document.getElementById('btnJepret').classList.remove('hidden');
             document.getElementById('btnSimpan').classList.add('hidden');
+            
+            aturTombolJepret(false);
 
             try {
-                streamKamera = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-                document.getElementById('videoElement').srcObject = streamKamera;
+                streamKamera = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user" }, 
+                    audio: false 
+                });
+                
+                const videoElement = document.getElementById('videoElement');
+                videoElement.srcObject = streamKamera;
+                await videoElement.play();
+
+                mulaiDeteksiWajah(videoElement);
+
             } catch (err) {
-                alert('Gagal akses kamera!');
+                alert('Gagal akses kamera depan! Pastikan izin kamera aktif.');
                 tutupKamera();
             }
         }
 
+        function mulaiDeteksiWajah(video) {
+            const statusText = document.getElementById('statusWajah');
+            
+            if (!modelSudahSiap) {
+                statusText.innerText = "Model AI sedang disiapkan, tunggu sebentar...";
+                setTimeout(() => mulaiDeteksiWajah(video), 1000);
+                return;
+            }
+
+            deteksiInterval = setInterval(async () => {
+                if (video.paused || video.ended) return;
+                try {
+                    // Mendeteksi wajah menggunakan TinyFaceDetector AI
+                    const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+
+                    if (detections) {
+                        wajahTerdeteksi = true;
+                        statusText.innerText = "✅ Wajah terdeteksi! Silakan bebas bergaya & jepret.";
+                        statusText.className = "text-xs text-emerald-600 font-medium mt-0.5";
+                        aturTombolJepret(true);
+                    } else {
+                        wajahTerdeteksi = false;
+                        statusText.innerText = "❌ Bukan wajah! Arahkan kamera ke muka asli.";
+                        statusText.className = "text-xs text-rose-500 font-medium mt-0.5";
+                        aturTombolJepret(false);
+                    }
+                } catch (e) {
+                    // Abaikan error frame sesaat
+                }
+            }, 600); // Cek tiap 0.6 detik
+        }
+
+        function aturTombolJepret(aktif) {
+            const btn = document.getElementById('btnJepret');
+            if (aktif) {
+                btn.disabled = false;
+                btn.classList.remove('bg-indigo-300', 'cursor-not-allowed');
+                btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                btn.classList.add('bg-indigo-300', 'cursor-not-allowed');
+            }
+        }
+
         function tutupKamera() {
+            if (deteksiInterval) clearInterval(deteksiInterval);
             if (streamKamera) streamKamera.getTracks().forEach(t => t.stop());
             document.getElementById('modalKamera').classList.add('hidden');
             fotoBlob = null;
+            wajahTerdeteksi = false;
         }
 
         function jepretFoto() {
+            if (!wajahTerdeteksi) {
+                alert('Tombol terkunci karena belum ada wajah asli yang terdeteksi!');
+                return;
+            }
+
+            if (deteksiInterval) clearInterval(deteksiInterval);
+
             const video = document.getElementById('videoElement');
             const canvas = document.getElementById('canvasElement');
             canvas.width = video.videoWidth;
@@ -210,6 +291,7 @@
             document.getElementById('resultContainer').classList.remove('hidden');
             document.getElementById('btnJepret').classList.add('hidden');
             document.getElementById('btnSimpan').classList.remove('hidden');
+            document.getElementById('statusWajah').innerText = "✨ Foto verifikasi siap disimpan!";
         }
 
         async function simpanTransaksi() {
@@ -274,7 +356,6 @@
             const loadingOverlay = document.getElementById('fullLoadingOverlay');
             const list = document.getElementById('listHistori');
             
-            // Tampilkan layar blur & loading fullscreen
             if (loadingOverlay) {
                 loadingOverlay.classList.remove('hidden');
             }
@@ -286,7 +367,6 @@
                 
                 let tBersama = 0, tKamu = 0, tPacar = 0;
 
-                // Sembunyikan layar blur & loading begitu data sukses ditarik
                 if (loadingOverlay) {
                     loadingOverlay.classList.add('hidden');
                 }
@@ -345,7 +425,6 @@
                 document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
                 document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
             } catch (e) {
-                // Sembunyikan juga jika terjadi error
                 if (loadingOverlay) {
                     loadingOverlay.classList.add('hidden');
                 }
