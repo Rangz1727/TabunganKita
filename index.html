@@ -227,7 +227,11 @@
 
         function mulaiDeteksiWajah(video) {
             const statusText = document.getElementById('statusWajah');
+            
+            // Jika model AI belum siap, tunggu sebentar
             if (!modelSudahSiap) {
+                statusText.innerText = "Memuat AI pendeteksi wajah...";
+                statusText.className = "text-xs text-rose-500 font-medium mt-0.5";
                 setTimeout(() => mulaiDeteksiWajah(video), 1000);
                 return;
             }
@@ -235,23 +239,29 @@
             deteksiInterval = setInterval(async () => {
                 if (video.paused || video.ended) return;
                 try {
+                    // Deteksi wajah menggunakan Face-API
                     const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+                    
                     if (detections) {
+                        // KONDISI ADA WAJAH: Tombol Jepret diaktifkan
                         wajahTerdeteksi = true;
                         statusText.innerText = "✅ Wajah terdeteksi! Silakan jepret.";
                         statusText.className = "text-xs text-emerald-600 font-medium mt-0.5";
                         aturTombolJepret(true);
                     } else {
-                        wajahTerdeteksi = true; // Diubah jadi true otomatis sebagai cadangan kalau pencahayaan kurang/AI tidak mendeteksi pas
-                        statusText.innerText = "⚠️ Kamera aktif. Silakan jepret foto.";
-                        statusText.className = "text-xs text-amber-600 font-medium mt-0.5";
-                        aturTombolJepret(true);
+                        // KONDISI TIDAK ADA WAJAH: Tombol Jepret DIKUNCI MATI
+                        wajahTerdeteksi = false;
+                        statusText.innerText = "❌ Tidak ada wajah! Arahkan kamera ke muka asli.";
+                        statusText.className = "text-xs text-rose-500 font-medium mt-0.5";
+                        aturTombolJepret(false);
                     }
                 } catch (e) {
-                    wajahTerdeteksi = true;
-                    aturTombolJepret(true);
+                    wajahTerdeteksi = false;
+                    statusText.innerText = "⚠️ Gagal mendeteksi wajah.";
+                    statusText.className = "text-xs text-rose-500 font-medium mt-0.5";
+                    aturTombolJepret(false);
                 }
-            }, 800);
+            }, 600);
         }
 
         function aturTombolJepret(aktif) {
