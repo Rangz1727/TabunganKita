@@ -8,21 +8,21 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1/dist/face-api.js"></script>
     <style>
         #videoElement {
-            transform: scaleX(-1); /* Video kamera tetap dibalik agar enak dilihat secara live */
+            transform: scaleX(-1);
             object-fit: cover;
             width: 100%;
             height: 100%;
         }
         #imgPreview {
-            /* Preview web TIDAK mirror (normal) */
             object-fit: cover;
             width: 100%;
             height: 100%;
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800 antialiased">
 
+    <!-- Loading Overlay -->
     <div id="fullLoadingOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex flex-col items-center justify-center z-50 transition-opacity duration-300">
         <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center space-y-3">
             <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
@@ -32,140 +32,197 @@
 
     <div class="max-w-md mx-auto p-4 sm:p-6 pb-20">
         <header class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-indigo-600">💰 Tabungan Kita</h1>
-            <p class="text-sm text-slate-500">Semangat Nabungnya</p>
+            <h1 class="text-2xl font-bold tracking-tight text-indigo-600">💰 Tabungan Kita</h1>
+            <p class="text-xs text-slate-400 mt-0.5">Financial Tracker Elegan & Terpusat</p>
         </header>
 
-        <div class="space-y-3 mb-6">
-            <div class="bg-gradient-to-r from-indigo-500 to-violet-600 rounded-2xl p-4 text-white shadow-lg flex flex-col justify-between">
+        <div class="space-y-4 mb-6">
+            <!-- Saldo Murni Tabungan Bersama -->
+            <div class="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-5 text-white shadow-lg shadow-indigo-100 flex flex-col justify-between">
                 <div>
-                    <p class="text-xs uppercase tracking-wider opacity-80">Saldo Bersama</p>
-                    <h2 id="saldoBersama" class="text-2xl font-extrabold mt-1">Rp 0</h2>
+                    <p class="text-[11px] uppercase tracking-wider opacity-80 font-medium">✨ Pure Saldo Tabungan Bersama</p>
+                    <h2 id="saldoBersama" class="text-3xl font-extrabold mt-1 tracking-tight">Rp 0</h2>
                 </div>
-                <div class="mt-3 pt-3 border-t border-white/20 flex justify-between items-center">
-                    <p id="labelRekapBersama" class="text-[10px] uppercase tracking-wider opacity-80">Rekap Bulan Lalu</p>
-                    <p id="rekapBersama" class="text-sm font-bold text-emerald-300">Rp 0</p>
+                <div class="mt-4 pt-3 border-t border-white/15 flex justify-between items-center text-xs">
+                    <span id="labelRekapBersama" class="opacity-80">Rekap Bulan Lalu</span>
+                    <span id="rekapBersama" class="font-bold text-emerald-300">Rp 0</span>
                 </div>
             </div>
 
             <!-- Card Gabungan: Rincian Pengeluaran Bulan Ini -->
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 font-semibold">📉 Total Pengeluaran Bulan Ini</p>
-                <div class="space-y-2 pt-1 text-sm">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 font-semibold">📉 Pengeluaran Bulan Ini (Semua Akun)</p>
+                <div class="space-y-2.5 text-sm">
                     <div class="flex justify-between items-center">
                         <span class="text-slate-600 text-xs">Tabungan Bersama</span>
                         <span id="keluarBersama" class="font-bold text-rose-600">Rp 0</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-600 text-xs">Pribadi: LEA</span>
+                        <span class="text-slate-600 text-xs">Pribadi: LEA (Total Semua Akun)</span>
                         <span id="keluarLea" class="font-bold text-rose-600">Rp 0</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-600 text-xs">Pribadi: MELATI</span>
+                        <span class="text-slate-600 text-xs">Pribadi: MELATI (Total Semua Akun)</span>
                         <span id="keluarMelati" class="font-bold text-rose-600">Rp 0</span>
                     </div>
                 </div>
             </div>
-            
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
+
+            <!-- Card Pribadi dengan Akun Spesifik -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <!-- CARD LEA -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
                     <div>
-                        <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: LEA</p>
-                        <h3 id="saldoKamu" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                        <div class="flex justify-between items-center mb-1">
+                            <p class="text-[11px] uppercase tracking-wider text-indigo-600 font-bold">Pribadi: LEA</p>
+                            <button onclick="bukaModalPilihAkun('LEA')" class="flex items-center gap-1 text-[11px] bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full font-bold hover:bg-indigo-100 transition">
+                                <span id="labelEwalletLea">DANA</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-[10px] text-slate-400 font-medium uppercase">Saldo Akun Ini</p>
+                            <h3 id="saldoLeaTerpilih" class="text-2xl font-black text-slate-700">Rp 0</h3>
+                        </div>
                     </div>
-                    <div class="mt-3 pt-3 border-t border-slate-100">
-                        <p id="labelRekapLea" class="text-[10px] uppercase tracking-wider text-slate-400">Bulan Lalu</p>
-                        <p id="rekapLea" class="text-sm font-bold text-emerald-600 mt-0.5">Rp 0</p>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Keluar Akun Ini</span>
+                            <span id="keluarAkunLeaBulanIni" class="font-bold text-rose-600">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-1 border-t border-slate-50">
+                            <span id="labelRekapLea" class="text-slate-400">Rekap Bulan Lalu</span>
+                            <p id="rekapLea" class="font-bold text-emerald-600">Rp 0</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col justify-between">
+                <!-- CARD MELATI -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
                     <div>
-                        <p class="text-xs uppercase tracking-wider text-slate-400">Pribadi: MELATI</p>
-                        <h3 id="saldoPacar" class="text-xl font-bold text-slate-700 mt-1">Rp 0</h3>
+                        <div class="flex justify-between items-center mb-1">
+                            <p class="text-[11px] uppercase tracking-wider text-violet-600 font-bold">Pribadi: MELATI</p>
+                            <button onclick="bukaModalPilihAkun('MELATI')" class="flex items-center gap-1 text-[11px] bg-violet-50 text-violet-600 px-2.5 py-1 rounded-full font-bold hover:bg-violet-100 transition">
+                                <span id="labelEwalletMelati">DANA</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                        <div class="mt-2">
+                            <p class="text-[10px] text-slate-400 font-medium uppercase">Saldo Akun Ini</p>
+                            <h3 id="saldoMelatiTerpilih" class="text-2xl font-black text-slate-700">Rp 0</h3>
+                        </div>
                     </div>
-                    <div class="mt-3 pt-3 border-t border-slate-100">
-                        <p id="labelRekapMelati" class="text-[10px] uppercase tracking-wider text-slate-400">Bulan Lalu</p>
-                        <p id="rekapMelati" class="text-sm font-bold text-emerald-600 mt-0.5">Rp 0</p>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Keluar Akun Ini</span>
+                            <span id="keluarAkunMelatiBulanIni" class="font-bold text-rose-600">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-1 border-t border-slate-50">
+                            <span id="labelRekapMelati" class="text-slate-400">Rekap Bulan Lalu</span>
+                            <p id="rekapMelati" class="font-bold text-emerald-600">Rp 0</p>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
-            <h3 class="font-bold text-slate-700 mb-4">Catat Transaksi Baru</h3>
-            <div class="space-y-4">
+        <!-- Form Catat Transaksi Baru -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+            <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wider">Catat Transaksi Baru</h3>
+            <div class="space-y-3.5">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Siapa yang transaksi?</label>
-                    <select id="namaUser" class="w-full border rounded-xl p-2.5 text-sm bg-white">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Siapa yang transaksi?</label>
+                    <select id="namaUser" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
                         <option value="" disabled selected>-- Pilih yang transaksi --</option>
                         <option value="LEA">LEA</option>
                         <option value="MELATI">MELATI</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori Dompet</label>
-                    <select id="kategoriDompet" class="w-full border rounded-xl p-2.5 text-sm bg-white">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Kategori Dompet</label>
+                    <select id="kategoriDompet" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
                         <option value="" disabled selected>-- Pilih kategori dompet --</option>
-                        <option value="bersama">Tabungan Bersama</option>
+                        <option value="bersama">Tabungan Pure Bersama</option>
                         <option value="pribadi">Tabungan Pribadi (Sesuai nama di atas)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Jenis Transaksi</label>
-                    <select id="jenisTransaksi" class="w-full border rounded-xl p-2.5 text-sm bg-white">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Sumber Akun / Bank</label>
+                    <!-- Opsi Tabungan Awal Murni dihapus dari dropdown input agar transaksi dompet tidak nyasar -->
+                    <select id="sumberDompet" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
+                        <option value="" disabled selected>-- Pilih sumber dompet --</option>
+                        <option value="BCA">BCA</option>
+                        <option value="Mandiri">Mandiri</option>
+                        <option value="GoPay">GoPay</option>
+                        <option value="DANA">DANA</option>
+                        <option value="ShopeePay">ShopeePay</option>
+                        <option value="Cash/Tunai">Cash / Tunai</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Jenis Transaksi</label>
+                    <select id="jenisTransaksi" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
                         <option value="" disabled selected>-- Pilih jenis transaksi --</option>
                         <option value="masuk">Tambah Saldo (+)</option>
                         <option value="keluar">Kurang Saldo (-)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal (Rp)</label>
-                    <input type="text" id="nominal" placeholder="Contoh: 50.000" oninput="formatInputNominal(this)" class="w-full border rounded-xl p-2.5 text-sm">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Nominal (Rp)</label>
+                    <input type="text" id="nominal" placeholder="Contoh: 50.000" oninput="formatInputNominal(this)" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan</label>
-                    <input type="text" id="catatan" placeholder="Misal: Nabung / Beli jajan" class="w-full border rounded-xl p-2.5 text-sm">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Catatan</label>
+                    <input type="text" id="catatan" placeholder="Misal: Top up DANA / Beli jajan" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
                 </div>
-                <button onclick="bukaKamera()" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow hover:bg-indigo-700 transition">
+                <button onclick="bukaKamera()" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-md shadow-indigo-100 hover:bg-indigo-700 transition">
                     📸 Ambil Foto Verifikasi Muka
                 </button>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-5 shadow-sm mb-6">
-            <h3 class="font-bold text-slate-700 mb-3">Histori Semua Transaksi</h3>
+        <!-- Histori Transaksi -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+            <h3 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider">Histori Semua Transaksi</h3>
             <div id="listHistori" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
-        </div>
-
-        <div class="bg-white rounded-2xl p-5 shadow-sm">
-            <h3 class="font-bold text-slate-700 mb-1">📁 Arsip Rekap Bulanan</h3>
-            <p class="text-xs text-slate-400 mb-3">Daftar rekap dari bulan-bulan sebelumnya.</p>
-            <div id="listArsip" class="space-y-3">
-                <p class="text-xs text-slate-400 text-center py-2">Belum ada arsip.</p>
-            </div>
         </div>
     </div>
 
-    <div id="modalKamera" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-5 flex flex-col max-h-[90vh]">
-            <div class="text-center mb-2 flex-shrink-0">
+    <!-- Modal Pop-up Pilih Akun -->
+    <div id="modalPilihAkun" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl max-w-xs w-full p-5 flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center mb-3">
+                <h3 id="modalAkunTitle" class="font-bold text-slate-700 text-sm uppercase tracking-wider">Pilih Akun</h3>
+                <button onclick="tutupModalPilihAkun()" class="text-slate-400 hover:text-slate-600 font-bold text-base">&times;</button>
+            </div>
+            <div id="containerModalAkun" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
+        </div>
+    </div>
+
+    <!-- Modal Kamera -->
+    <div id="modalKamera" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 flex flex-col max-h-[90vh] shadow-2xl">
+            <div class="text-center mb-3 flex-shrink-0">
                 <h3 class="font-bold text-lg text-slate-700">Verifikasi Wajah Asli</h3>
                 <p id="statusWajah" class="text-xs text-rose-500 font-medium mt-0.5">Memuat model AI wajah...</p>
             </div>
             <div class="overflow-y-auto flex-grow space-y-3 pr-1 mb-4">
-                <div id="videoContainer" class="relative rounded-xl overflow-hidden bg-black aspect-square w-full">
+                <div id="videoContainer" class="relative rounded-2xl overflow-hidden bg-black aspect-square w-full">
                     <video id="videoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
                     <canvas id="canvasElement" class="hidden"></canvas>
                 </div>
                 <div id="resultContainer" class="hidden">
-                    <img id="imgPreview" class="w-full aspect-square object-cover rounded-xl border">
+                    <img id="imgPreview" class="w-full aspect-square object-cover rounded-2xl border border-slate-100">
                 </div>
             </div>
-            <div class="flex gap-2 flex-shrink-0 pt-2 border-t">
-                <button onclick="tutupKamera()" class="flex-1 bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-semibold">Batal</button>
-                <button id="btnJepret" onclick="jepretFoto()" disabled class="flex-1 bg-indigo-300 text-white py-2.5 rounded-xl text-sm font-semibold cursor-not-allowed">Jepret 📸</button>
-                <button id="btnSimpan" onclick="simpanTransaksi()" class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-semibold hidden">Simpan ✨</button>
+            <div class="flex gap-2 flex-shrink-0 pt-2 border-t border-slate-100">
+                <button onclick="tutupKamera()" class="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-200 transition">Batal</button>
+                <button id="btnJepret" onclick="jepretFoto()" disabled class="flex-1 bg-indigo-200 text-white py-2.5 rounded-xl text-sm font-semibold cursor-not-allowed transition">Jepret 📸</button>
+                <button id="btnSimpan" onclick="simpanTransaksi()" class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-semibold hidden hover:bg-emerald-700 transition">Simpan ✨</button>
             </div>
         </div>
     </div>
@@ -177,9 +234,20 @@
         let streamKamera = null;
         let fotoBlob = null;
         let deteksiInterval = null;
-        let wajahTerdeteksi = false;
         let modelSudahSiap = false;
         let dataTransaksiGlobal = [];
+
+        // Default langsung ke DANA agar card tidak kosong saat pertama buka
+        let ewalletAktifLea = 'DANA';
+        let ewalletAktifMelati = 'DANA';
+        let currentUserModal = '';
+
+        let cacheSaldoAkunLea = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+        let cacheSaldoAkunMelati = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+        let cacheKeluarAkunLeaBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+        let cacheKeluarAkunMelatiBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+
+        const daftarAkun = ["BCA", "Mandiri", "GoPay", "DANA", "ShopeePay", "Cash/Tunai"];
 
         window.onload = async function() {
             setTimeout(() => {
@@ -187,17 +255,66 @@
                 if (overlay && !overlay.classList.contains('hidden')) {
                     overlay.classList.add('hidden');
                 }
-            }, 5000);
+            }, 4000);
 
             ambilData();
 
             try {
-                document.getElementById('statusWajah').innerText = "Memuat AI pendeteksi wajah...";
                 await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
                 modelSudahSiap = true;
             } catch (e) {
                 modelSudahSiap = true;
             }
+        }
+
+        function renderPilihanEwalletInternal() {
+            document.getElementById('labelEwalletLea').innerText = ewalletAktifLea;
+            let saldoLeaVal = cacheSaldoAkunLea[ewalletAktifLea] || 0;
+            document.getElementById('saldoLeaTerpilih').innerText = `Rp ${saldoLeaVal.toLocaleString('id-ID')}`;
+            let keluarLeaAkunVal = cacheKeluarAkunLeaBulanIni[ewalletAktifLea] || 0;
+            document.getElementById('keluarAkunLeaBulanIni').innerText = `Rp ${keluarLeaAkunVal.toLocaleString('id-ID')}`;
+
+            document.getElementById('labelEwalletMelati').innerText = ewalletAktifMelati;
+            let saldoMelatiVal = cacheSaldoAkunMelati[ewalletAktifMelati] || 0;
+            document.getElementById('saldoMelatiTerpilih').innerText = `Rp ${saldoMelatiVal.toLocaleString('id-ID')}`;
+            let keluarMelatiAkunVal = cacheKeluarAkunMelatiBulanIni[ewalletAktifMelati] || 0;
+            document.getElementById('keluarAkunMelatiBulanIni').innerText = `Rp ${keluarMelatiAkunVal.toLocaleString('id-ID')}`;
+        }
+
+        function bukaModalPilihAkun(user) {
+            currentUserModal = user;
+            const container = document.getElementById('containerModalAkun');
+            container.innerHTML = '';
+            
+            const akunAktif = user === 'LEA' ? ewalletAktifLea : ewalletAktifMelati;
+            document.getElementById('modalAkunTitle').innerText = `Pilih Akun - ${user}`;
+
+            daftarAkun.forEach(akun => {
+                const isAktif = akun === akunAktif;
+                const activeClass = isAktif ? 'bg-indigo-50 text-indigo-600 font-bold border-indigo-200' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-100';
+                
+                container.innerHTML += `
+                    <button onclick="pilihAkunDariModal('${akun}')" class="w-full p-2.5 rounded-xl text-xs border text-left flex justify-between items-center transition ${activeClass}">
+                        <span>${akun}</span>
+                        ${isAktif ? '<span class="text-indigo-600">✓</span>' : ''}
+                    </button>
+                `;
+            });
+            document.getElementById('modalPilihAkun').classList.remove('hidden');
+        }
+
+        function tutupModalPilihAkun() {
+            document.getElementById('modalPilihAkun').classList.add('hidden');
+        }
+
+        function pilihAkunDariModal(akun) {
+            if (currentUserModal === 'LEA') {
+                ewalletAktifLea = akun;
+            } else {
+                ewalletAktifMelati = akun;
+            }
+            tutupModalPilihAkun();
+            renderPilihanEwalletInternal();
         }
 
         function formatInputNominal(input) {
@@ -215,26 +332,20 @@
         }
 
         async function bukaKamera() {
-            const namaUser = document.getElementById('namaUser').value;
-            const kategoriDompet = document.getElementById('kategoriDompet').value;
-            const jenisTransaksi = document.getElementById('jenisTransaksi').value;
-
-            if (!namaUser) { alert('Pilih dulu siapa yang transaksi!'); return; }
-            if (!kategoriDompet) { alert('Pilih dulu kategori dompetnya!'); return; }
-            if (!jenisTransaksi) { alert('Pilih dulu jenis transaksinya!'); return; }
-
-            const inputNominalStr = document.getElementById('nominal').value;
-            const nominalBersih = parseFloat(inputNominalStr.replace(/\./g, '').replace(',', '.')) || 0;
-
-            if(nominalBersih <= 0) { alert('Isi nominal dulu dengan benar!'); return; }
+            if (!document.getElementById('namaUser').value) { alert('Pilih siapa yang transaksi!'); return; }
+            if (!document.getElementById('kategoriDompet').value) { alert('Pilih kategori dompet!'); return; }
+            if (!document.getElementById('sumberDompet').value) { alert('Pilih sumber akun/bank!'); return; }
+            if (!document.getElementById('jenisTransaksi').value) { alert('Pilih jenis transaksi!'); return; }
+            
+            const nominalBersih = parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0;
+            if (nominalBersih <= 0) { alert('Isi nominal dengan benar!'); return; }
 
             document.getElementById('modalKamera').classList.remove('hidden');
             document.getElementById('resultContainer').classList.add('hidden');
             document.getElementById('videoContainer').classList.remove('hidden');
             document.getElementById('btnJepret').classList.remove('hidden');
             document.getElementById('btnSimpan').classList.add('hidden');
-            
-            aturTombolJepret(true); 
+            aturTombolJepret(true);
 
             try {
                 streamKamera = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
@@ -250,17 +361,12 @@
 
         function mulaiDeteksiWajah(video) {
             const statusText = document.getElementById('statusWajah');
-            if (!modelSudahSiap) {
-                setTimeout(() => mulaiDeteksiWajah(video), 1000);
-                return;
-            }
-
             deteksiInterval = setInterval(async () => {
                 if (video.paused || video.ended) return;
                 try {
                     const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
                     if (detections) {
-                        statusText.innerText = "✅ Wajah terdeteksi! Silakan jepret.";
+                        statusText.innerText = "✅ Wajah terdeteksi!";
                         statusText.className = "text-xs text-emerald-600 font-medium mt-0.5";
                         aturTombolJepret(true);
                     } else {
@@ -276,15 +382,8 @@
 
         function aturTombolJepret(aktif) {
             const btn = document.getElementById('btnJepret');
-            if (aktif) {
-                btn.disabled = false;
-                btn.classList.remove('bg-indigo-300', 'cursor-not-allowed');
-                btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
-            } else {
-                btn.disabled = true;
-                btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-                btn.classList.add('bg-indigo-300', 'cursor-not-allowed');
-            }
+            btn.disabled = !aktif;
+            btn.className = aktif ? 'flex-1 bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition' : 'flex-1 bg-indigo-200 text-white py-2.5 rounded-xl text-sm font-semibold cursor-not-allowed transition';
         }
 
         function tutupKamera() {
@@ -302,19 +401,13 @@
             canvas.height = video.videoHeight || 640;
             
             const ctx = canvas.getContext('2d');
-            
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
-            
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
             canvas.toBlob((blob) => {
                 fotoBlob = blob;
-                const imageUrl = URL.createObjectURL(blob);
-                const imgPreview = document.getElementById('imgPreview');
-                
-                imgPreview.style.transform = "none";
-                imgPreview.src = imageUrl;
+                document.getElementById('imgPreview').src = URL.createObjectURL(blob);
             }, 'image/png');
 
             if (streamKamera) streamKamera.getTracks().forEach(t => t.stop());
@@ -330,13 +423,13 @@
             btnSimpan.innerText = "Menyimpan...";
             btnSimpan.disabled = true;
 
-            const nominalMurni = parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0;
             const dataBaru = {
                 action: 'tambah',
                 namaUser: document.getElementById('namaUser').value,
                 kategoriDompet: document.getElementById('kategoriDompet').value,
+                sumberDompet: document.getElementById('sumberDompet').value,
                 jenisTransaksi: document.getElementById('jenisTransaksi').value,
-                nominal: nominalMurni,
+                nominal: parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0,
                 catatan: document.getElementById('catatan').value || 'Tanpa catatan',
                 tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
@@ -351,7 +444,7 @@
                     const discordData = new FormData();
                     const sign = dataBaru.jenisTransaksi === 'masuk' ? '+ Rp' : '- Rp';
                     discordData.append("payload_json", JSON.stringify({ 
-                        content: `🔔 **TRANSAKSI BARU**\n📁 Dompet: ${dataBaru.kategoriDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
+                        content: `🔔 **TRANSAKSI BARU**\n📁 Dompet: ${dataBaru.kategoriDompet}\n💳 Akun: ${dataBaru.sumberDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
                     }));
                     discordData.append("file", fotoBlob, "vermuk.png");
                     await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: discordData });
@@ -359,6 +452,7 @@
 
                 document.getElementById('namaUser').selectedIndex = 0;
                 document.getElementById('kategoriDompet').selectedIndex = 0;
+                document.getElementById('sumberDompet').selectedIndex = 0;
                 document.getElementById('jenisTransaksi').selectedIndex = 0;
                 document.getElementById('nominal').value = '';
                 document.getElementById('catatan').value = '';
@@ -366,27 +460,15 @@
                 setTimeout(ambilData, 2000);
             } catch (error) {
                 alert("Gagal menyimpan data.");
-                document.getElementById('fullLoadingOverlay').classList.add('hidden');
             } finally {
                 btnSimpan.innerText = "Simpan ✨";
                 btnSimpan.disabled = false;
             }
         }
 
-        function ajukanHapus(indexBaris) {
-            const item = dataTransaksiGlobal[indexBaris];
-            if (!item) return;
-
-            const alasan = prompt("Ketik alasan/catatan kenapa transaksi ini ingin dihapus:");
-            if (alasan === null) return;
-
-            alert("📝 Permintaan hapus dicatat. Silakan hapus baris transaksi ini secara manual langsung di Google Sheets kamu.");
-        }
-
         async function ambilData() {
             const loadingOverlay = document.getElementById('fullLoadingOverlay');
             const listHistori = document.getElementById('listHistori');
-            const listArsip = document.getElementById('listArsip');
             
             if (loadingOverlay) loadingOverlay.classList.remove('hidden');
             listHistori.innerHTML = '';
@@ -394,137 +476,94 @@
             try {
                 const res = await fetch(WEB_APP_URL);
                 const responseJson = await res.json();
-                
                 dataTransaksiGlobal = Array.isArray(responseJson) ? responseJson : (responseJson.transaksi || []);
-                const dataArsipServer = Array.isArray(responseJson) ? [] : (responseJson.arsip || []);
 
-                let tBersama = 0, tKamu = 0, tPacar = 0;
+                let tBersama = 0;
                 let keluarBersamaBulanIni = 0;
-                let keluarLeaBulanIni = 0;
-                let keluarMelatiBulanIni = 0;
+                let totalKeluarLeaBulanIni = 0;
+                let totalKeluarMelatiBulanIni = 0;
+                
+                cacheSaldoAkunLea = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+                cacheSaldoAkunMelati = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+                
+                cacheKeluarAkunLeaBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+                cacheKeluarAkunMelatiBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+                
                 let rekapBulananMap = {};
-
+                let rekapLeaMap = {};
+                let rekapMelatiMap = {};
                 const dateBulanIni = new Date().toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
 
                 if (loadingOverlay) loadingOverlay.classList.add('hidden');
 
                 if (dataTransaksiGlobal.length === 0) {
                     listHistori.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
-                    document.getElementById('saldoBersama').innerText = `Rp 0`;
-                    document.getElementById('keluarBersama').innerText = `Rp 0`;
-                    document.getElementById('keluarLea').innerText = `Rp 0`;
-                    document.getElementById('keluarMelati').innerText = `Rp 0`;
-                    document.getElementById('rekapBersama').innerText = `Rp 0`;
-                    document.getElementById('saldoKamu').innerText = `Rp 0`;
-                    document.getElementById('saldoPacar').innerText = `Rp 0`;
-                    document.getElementById('rekapLea').innerText = `Rp 0`;
-                    document.getElementById('rekapMelati').innerText = `Rp 0`;
+                    renderPilihanEwalletInternal();
                     return;
                 }
 
                 dataTransaksiGlobal.slice().reverse().forEach((item, indexTerbalik) => {
-                    const indexAsli = dataTransaksiGlobal.length - 1 - indexTerbalik;
                     const nom = Number(item.nominal) || 0;
-                    
                     let namaUser = String(item.namaUser || 'LEA').trim().toUpperCase();
                     const kategori = String(item.kategoriDompet || 'bersama').trim().toLowerCase();
+                    let sumber = String(item.sumberDompet || 'DANA').trim();
                     const jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
-                    const catatan = item.catatan || '-';
-                    const tanggal = item.tanggal || '-';
-                    
                     const isMelati = namaUser.includes('MELATI');
-
-                    if (jenis === 'keluar' && tanggal.includes(dateBulanIni)) {
-                        if (kategori === 'bersama') {
-                            keluarBersamaBulanIni += nom;
-                        } else {
-                            if (isMelati) {
-                                keluarMelatiBulanIni += nom;
-                            } else {
-                                keluarLeaBulanIni += nom;
-                            }
-                        }
-                    }
 
                     if (kategori === 'bersama') {
                         if (jenis === 'masuk') tBersama += nom; else tBersama -= nom;
+                        if (jenis === 'keluar' && String(item.tanggal).includes(dateBulanIni)) {
+                            keluarBersamaBulanIni += nom;
+                        }
                     } else {
                         if (isMelati) {
-                            if (jenis === 'masuk') tPacar += nom; else tPacar -= nom;
+                            if (cacheSaldoAkunMelati[sumber] !== undefined) {
+                                if (jenis === 'masuk') cacheSaldoAkunMelati[sumber] += nom;
+                                else {
+                                    cacheSaldoAkunMelati[sumber] -= nom;
+                                    if (String(item.tanggal).includes(dateBulanIni)) {
+                                        cacheKeluarAkunMelatiBulanIni[sumber] += nom;
+                                        totalKeluarMelatiBulanIni += nom;
+                                    }
+                                }
+                            }
                         } else {
-                            if (jenis === 'masuk') tKamu += nom; else tKamu -= nom;
-                        }
-                    }
-
-                    let parts = tanggal.split(' ');
-                    if (parts.length >= 3) {
-                        let bulanTahunKey = parts[1] + ' ' + parts[2].replace(',', '');
-                        if (!rekapBulananMap[bulanTahunKey]) {
-                            rekapBulananMap[bulanTahunKey] = { bersama: 0, lea: 0, melati: 0 };
-                        }
-                        if (kategori === 'bersama') {
-                            if (jenis === 'masuk') rekapBulananMap[bulanTahunKey].bersama += nom;
-                            else rekapBulananMap[bulanTahunKey].bersama -= nom;
-                        } else {
-                            if (isMelati) {
-                                if (jenis === 'masuk') rekapBulananMap[bulanTahunKey].melati += nom;
-                                else rekapBulananMap[bulanTahunKey].melati -= nom;
-                            } else {
-                                if (jenis === 'masuk') rekapBulananMap[bulanTahunKey].lea += nom;
-                                else rekapBulananMap[bulanTahunKey].lea -= nom;
+                            if (cacheSaldoAkunLea[sumber] !== undefined) {
+                                if (jenis === 'masuk') cacheSaldoAkunLea[sumber] += nom;
+                                else {
+                                    cacheSaldoAkunLea[sumber] -= nom;
+                                    if (String(item.tanggal).includes(dateBulanIni)) {
+                                        cacheKeluarAkunLeaBulanIni[sumber] += nom;
+                                        totalKeluarLeaBulanIni += nom;
+                                    }
+                                }
                             }
                         }
                     }
 
-                    const badge = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
-                    const prefix = jenis === 'masuk' ? '+ Rp' : '- Rp';
-                    const label = kategori === 'bersama' ? '🌐 Bersama' : `🔒 Pribadi`;
-
                     listHistori.innerHTML += `
-                        <div class="flex items-center justify-between border-b pb-3 py-1 gap-2">
-                            <div class="flex-grow">
-                                <div class="flex items-center gap-1.5">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 py-1 gap-2">
+                            <div>
+                                <div class="flex items-center gap-1.5 flex-wrap">
                                     <p class="text-sm font-bold text-slate-700">${namaUser}</p>
-                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${label}</span>
+                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${sumber}</span>
+                                    <span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">${kategori}</span>
                                 </div>
-                                <p class="text-xs text-slate-400">${catatan} • ${tanggal}</p>
+                                <p class="text-xs text-slate-400 mt-0.5">${item.catatan || '-'} • ${item.tanggal || '-'}</p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badge}">${prefix} ${nom.toLocaleString('id-ID')}</span>
-                                <button onclick="ajukanHapus(${indexAsli})" title="Info Hapus" class="text-slate-400 hover:text-rose-600 text-xs p-1 rounded transition">🎟️</button>
-                            </div>
+                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'}">${jenis === 'masuk' ? '+ Rp' : '- Rp'} ${nom.toLocaleString('id-ID')}</span>
                         </div>`;
                 });
 
-                let keysBulan = Object.keys(rekapBulananMap);
-                if (keysBulan.length >= 2) {
-                    let bulanLaluKey = keysBulan[keysBulan.length - 2];
-                    let dataBulanLalu = rekapBulananMap[bulanLaluKey];
-                    document.getElementById('labelRekapBersama').innerText = `Rekap ${bulanLaluKey}`;
-                    document.getElementById('rekapBersama').innerText = `Rp ${dataBulanLalu.bersama.toLocaleString('id-ID')}`;
-                    document.getElementById('labelRekapLea').innerText = `${bulanLaluKey}`;
-                    document.getElementById('rekapLea').innerText = `Rp ${dataBulanLalu.lea.toLocaleString('id-ID')}`;
-                    document.getElementById('labelRekapMelati').innerText = `${bulanLaluKey}`;
-                    document.getElementById('rekapMelati').innerText = `Rp ${dataBulanLalu.melati.toLocaleString('id-ID')}`;
-                }
-
+                renderPilihanEwalletInternal();
                 document.getElementById('saldoBersama').innerText = `Rp ${tBersama.toLocaleString('id-ID')}`;
                 document.getElementById('keluarBersama').innerText = `Rp ${keluarBersamaBulanIni.toLocaleString('id-ID')}`;
-                document.getElementById('keluarLea').innerText = `Rp ${keluarLeaBulanIni.toLocaleString('id-ID')}`;
-                document.getElementById('keluarMelati').innerText = `Rp ${keluarMelatiBulanIni.toLocaleString('id-ID')}`;
-                document.getElementById('saldoKamu').innerText = `Rp ${tKamu.toLocaleString('id-ID')}`;
-                document.getElementById('saldoPacar').innerText = `Rp ${tPacar.toLocaleString('id-ID')}`;
-
-                if (dataArsipServer.length > 0) {
-                    listArsip.innerHTML = '';
-                    dataArsipServer.forEach(arsip => {
-                        listArsip.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl text-xs text-slate-600 flex justify-between"><span>${arsip.bulan}</span><span>Bersama: Rp ${Number(arsip.bersama).toLocaleString('id-ID')}</span></div>`;
-                    });
-                }
+                document.getElementById('keluarLea').innerText = `Rp ${totalKeluarLeaBulanIni.toLocaleString('id-ID')}`;
+                document.getElementById('keluarMelati').innerText = `Rp ${totalKeluarMelatiBulanIni.toLocaleString('id-ID')}`;
 
             } catch (error) {
                 if (loadingOverlay) loadingOverlay.classList.add('hidden');
-                listHistori.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data transaksi.</p>`;
+                listHistori.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Gagal memuat data.</p>`;
             }
         }
     </script>
