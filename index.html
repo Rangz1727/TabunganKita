@@ -143,7 +143,7 @@
                     <input type="hidden" id="kategoriDompet" value="">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1">Sumber Akun / Bank & Kategori Tabungan</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Sumber Akun / Bank Asal</label>
                     <button type="button" onclick="bukaModalPilihCustom('form_sumber', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 flex justify-between items-center text-slate-700 font-medium hover:bg-slate-100 transition">
                         <span id="valSumberDompet">-- Pilih nama user terlebih dahulu --</span>
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
@@ -158,6 +158,17 @@
                     </button>
                     <input type="hidden" id="jenisTransaksi" value="">
                 </div>
+
+                <!-- Kolom Bank Tujuan Transfer (Muncul otomatis jika jenis transaksi = transfer_saldo) -->
+                <div id="wrapperBankTujuan" class="hidden transition-all duration-300">
+                    <label class="block text-xs font-semibold text-indigo-600 mb-1">Bank / Akun Tujuan Transfer ⇄</label>
+                    <button type="button" onclick="bukaModalPilihCustom('form_tujuan', 'pilih')" class="w-full border border-indigo-200 rounded-xl p-2.5 text-sm bg-indigo-50/30 flex justify-between items-center text-slate-700 font-medium hover:bg-indigo-50 transition">
+                        <span id="valBankTujuan">-- Pilih bank tujuan --</span>
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="bankTujuan" value="">
+                </div>
+
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Nominal (Rp)</label>
                     <input type="text" id="nominal" placeholder="Contoh: 50.000" oninput="formatInputNominal(this)" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all duration-200">
@@ -511,7 +522,6 @@
                     
                     if (jenis === 'masuk') totalMasuk += nom;
                     else if (jenis === 'keluar') totalKeluar += nom;
-                    // jenis transfer_saldo tidak menambah total pengeluaran belanja murni arsip
 
                     container.innerHTML += `
                         <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex justify-between items-center gap-2 mb-1.5">
@@ -560,14 +570,22 @@
                     alert('Pilih nama user terlebih dahulu!');
                     return;
                 }
-                judul = "Pilih Sumber Akun";
+                judul = "Pilih Sumber Akun (Asal)";
                 listOpsi = userVal === 'LEA' ? akunLea : akunMelati;
+            } else if (target === 'form_tujuan') {
+                let userVal = document.getElementById('namaUser').value;
+                let sumberVal = document.getElementById('sumberDompet').value;
+                judul = "Pilih Akun Tujuan";
+                // Filter agar bank tujuan tidak sama dengan bank asal jika diperlukan
+                let daftarAkun = userVal === 'LEA' ? akunLea : akunMelati;
+                listOpsi = daftarAkun.filter(acc => acc !== sumberVal);
+                if (listOpsi.length === 0) listOpsi = daftarAkun; // fallback jika daftar habis
             } else if (target === 'form_jenis') {
                 judul = "Pilih Jenis Transaksi";
                 listOpsi = [
                     { label: "Tambah Saldo (+)", val: "masuk" },
                     { label: "Kurang Saldo (-)", val: "keluar" },
-                    { label: "Transfer Saldo / Koreksi (⇄)", val: "transfer_saldo" } // <-- Kategori dipindah ke sini
+                    { label: "Transfer Saldo / Koreksi (⇄)", val: "transfer_saldo" }
                 ];
             }
 
@@ -614,6 +632,8 @@
                 document.getElementById('valNamaUser').className = "text-slate-800 font-semibold";
                 document.getElementById('sumberDompet').value = "";
                 document.getElementById('valSumberDompet').innerText = "-- Pilih sumber atau pos tabungan --";
+                document.getElementById('bankTujuan').value = "";
+                document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
             } else if (targetModalCustom === 'form_kategori') {
                 document.getElementById('kategoriDompet').value = val;
                 document.getElementById('valKategoriDompet').innerText = label;
@@ -622,10 +642,24 @@
                 document.getElementById('sumberDompet').value = val;
                 document.getElementById('valSumberDompet').innerText = label;
                 document.getElementById('valSumberDompet').className = "text-slate-800 font-semibold";
+            } else if (targetModalCustom === 'form_tujuan') {
+                document.getElementById('bankTujuan').value = val;
+                document.getElementById('valBankTujuan').innerText = label;
+                document.getElementById('valBankTujuan').className = "text-slate-800 font-semibold";
             } else if (targetModalCustom === 'form_jenis') {
                 document.getElementById('jenisTransaksi').value = val;
                 document.getElementById('valJenisTransaksi').innerText = label;
                 document.getElementById('valJenisTransaksi').className = "text-slate-800 font-semibold";
+                
+                // Tampilkan atau sembunyikan kotak bank tujuan berdasarkan pilihan
+                const wrapperTujuan = document.getElementById('wrapperBankTujuan');
+                if (val === 'transfer_saldo') {
+                    wrapperTujuan.classList.remove('hidden');
+                } else {
+                    wrapperTujuan.classList.add('hidden');
+                    document.getElementById('bankTujuan').value = "";
+                    document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
+                }
             }
             tutupModalPilihCustom();
         }
@@ -674,7 +708,12 @@
             if (!document.getElementById('namaUser').value) { alert('Pilih siapa yang transaksi!'); return; }
             if (!document.getElementById('kategoriDompet').value) { alert('Pilih kategori dompet!'); return; }
             if (!document.getElementById('sumberDompet').value) { alert('Pilih sumber akun/bank!'); return; }
-            if (!document.getElementById('jenisTransaksi').value) { alert('Pilih jenis transaksi!'); return; }
+            const jenisVal = document.getElementById('jenisTransaksi').value;
+            if (!jenisVal) { alert('Pilih jenis transaksi!'); return; }
+            if (jenisVal === 'transfer_saldo' && !document.getElementById('bankTujuan').value) {
+                alert('Pilih bank/akun tujuan transfer terlebih dahulu!');
+                return;
+            }
             
             const nominalBersih = parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0;
             if (nominalBersih <= 0) { alert('Isi nominal dengan benar!'); return; }
@@ -762,14 +801,24 @@
             btnSimpan.innerText = "Menyimpan...";
             btnSimpan.disabled = true;
 
+            const jenisVal = document.getElementById('jenisTransaksi').value;
+            let sumberVal = document.getElementById('sumberDompet').value;
+            const tujuanVal = document.getElementById('bankTujuan').value;
+            let catatanVal = document.getElementById('catatan').value || 'Tanpa catatan';
+
+            if (jenisVal === 'transfer_saldo' && tujuanVal) {
+                sumberVal = `${sumberVal} ➔ ${tujuanVal}`;
+                catatanVal = `Transfer ke ${tujuanVal}. ${catatanVal}`;
+            }
+
             const dataBaru = {
                 action: 'tambah',
                 namaUser: document.getElementById('namaUser').value,
                 kategoriDompet: document.getElementById('kategoriDompet').value,
-                sumberDompet: document.getElementById('sumberDompet').value,
-                jenisTransaksi: document.getElementById('jenisTransaksi').value,
+                sumberDompet: sumberVal,
+                jenisTransaksi: jenisVal,
                 nominal: parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0,
-                catatan: document.getElementById('catatan').value || 'Tanpa catatan',
+                catatan: catatanVal,
                 tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
             
@@ -781,10 +830,9 @@
 
                 if (DISCORD_WEBHOOK_URL && fotoBlob) {
                     const discordData = new FormData();
-                    const jenisVal = dataBaru.jenisTransaksi;
                     const sign = jenisVal === 'masuk' ? '+ Rp' : jenisVal === 'keluar' ? '- Rp' : '⇄ Rp';
                     discordData.append("payload_json", JSON.stringify({ 
-                        content: `🔔 **TRANSAKSI BARU**\n📁 Kategori: ${dataBaru.kategoriDompet}\n💳 Sumber/Tabungan: ${dataBaru.sumberDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
+                        content: `🔔 **TRANSAKSI BARU**\n📁 Kategori: ${dataBaru.kategoriDompet}\n💳 Akun/Transfer: ${dataBaru.sumberDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
                     }));
                     discordData.append("file", fotoBlob, "vermuk.png");
                     await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: discordData });
@@ -805,6 +853,10 @@
                 document.getElementById('jenisTransaksi').value = "";
                 document.getElementById('valJenisTransaksi').innerText = "-- Pilih jenis transaksi --";
                 document.getElementById('valJenisTransaksi').className = "text-slate-700 font-medium";
+
+                document.getElementById('bankTujuan').value = "";
+                document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
+                document.getElementById('wrapperBankTujuan').classList.add('hidden');
 
                 document.getElementById('nominal').value = '';
                 document.getElementById('catatan').value = '';
@@ -860,40 +912,53 @@
                     const jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
                     const isMelati = namaUser.includes('MELATI');
 
+                    // Jika ini catatan transfer dengan format "BankA ➔ BankB", kita parsing akun asalnya untuk update saldo
+                    let akunAsal = sumber;
+                    let akunTujuan = null;
+                    if (sumber.includes('➔')) {
+                        let splitBank = sumber.split('➔').map(s => s.trim());
+                        akunAsal = splitBank[0];
+                        akunTujuan = splitBank[1];
+                    }
+
                     if (kategori === 'bersama') {
                         if (jenis === 'masuk') tBersama += nom; 
                         else if (jenis === 'keluar') tBersama -= nom;
-                        // transfer_saldo pada bersama diabaikan dari penambahan/pengurangan saldo bersama secara murni jika tidak diperlukan, atau diperlakukan netral
                         
                         if (jenis === 'keluar' && String(item.tanggal).includes(dateBulanIni)) {
                             keluarBersamaBulanIni += nom;
                         }
                     } else {
                         if (isMelati) {
-                            if (cacheSaldoAkunMelati[sumber] !== undefined) {
-                                if (jenis === 'masuk') cacheSaldoAkunMelati[sumber] += nom;
+                            if (cacheSaldoAkunMelati[akunAsal] !== undefined) {
+                                if (jenis === 'masuk') cacheSaldoAkunMelati[akunAsal] += nom;
                                 else if (jenis === 'keluar') {
-                                    cacheSaldoAkunMelati[sumber] -= nom;
+                                    cacheSaldoAkunMelati[akunAsal] -= nom;
                                     if (String(item.tanggal).includes(dateBulanIni)) {
-                                        cacheKeluarAkunMelatiBulanIni[sumber] += nom;
+                                        cacheKeluarAkunMelatiBulanIni[akunAsal] += nom;
                                         totalKeluarMelatiBulanIni += nom;
                                     }
                                 } else if (jenis === 'transfer_saldo') {
-                                    // Transfer saldo / koreksi memperbarui saldo akun (bisa positif/tambah atau negatif/kurang tergantung konteks catatan/nominal, secara default mengurangi atau menyesuaikan saldo)
-                                    cacheSaldoAkunMelati[sumber] -= nom; 
+                                    cacheSaldoAkunMelati[akunAsal] -= nom; // Kurangi bank asal
+                                    if (akunTujuan && cacheSaldoAkunMelati[akunTujuan] !== undefined) {
+                                        cacheSaldoAkunMelati[akunTujuan] += nom; // Tambah ke bank tujuan
+                                    }
                                 }
                             }
                         } else {
-                            if (cacheSaldoAkunLea[sumber] !== undefined) {
-                                if (jenis === 'masuk') cacheSaldoAkunLea[sumber] += nom;
+                            if (cacheSaldoAkunLea[akunAsal] !== undefined) {
+                                if (jenis === 'masuk') cacheSaldoAkunLea[akunAsal] += nom;
                                 else if (jenis === 'keluar') {
-                                    cacheSaldoAkunLea[sumber] -= nom;
+                                    cacheSaldoAkunLea[akunAsal] -= nom;
                                     if (String(item.tanggal).includes(dateBulanIni)) {
-                                        cacheKeluarAkunLeaBulanIni[sumber] += nom;
+                                        cacheKeluarAkunLeaBulanIni[akunAsal] += nom;
                                         totalKeluarLeaBulanIni += nom;
                                     }
                                 } else if (jenis === 'transfer_saldo') {
-                                    cacheSaldoAkunLea[sumber] -= nom;
+                                    cacheSaldoAkunLea[akunAsal] -= nom; // Kurangi bank asal
+                                    if (akunTujuan && cacheSaldoAkunLea[akunTujuan] !== undefined) {
+                                        cacheSaldoAkunLea[akunTujuan] += nom; // Tambah ke bank tujuan
+                                    }
                                 }
                             }
                         }
