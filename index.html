@@ -172,7 +172,7 @@
             </div>
         </div>
 
-        <!-- Histori Transaksi Ringkas (Tombol Open Ticket di Samping Judul) -->
+        <!-- Histori Transaksi Ringkas -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider">Histori Semua Transaksi</h3>
@@ -183,7 +183,7 @@
             <div id="listHistori" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 1 Tombol Arsip Terpusat di Paling Bawah -->
+        <!-- Tombol Arsip Terpusat di Paling Bawah -->
         <div class="mb-6">
             <button onclick="bukaModalArsipUtama()" class="w-full bg-white border border-indigo-200 text-indigo-600 font-bold py-3.5 px-4 rounded-2xl shadow-sm hover:bg-indigo-50 transition flex items-center justify-center gap-2 text-sm">
                 <span>📂 Buka Arsip Rinci Transaksi</span>
@@ -241,7 +241,7 @@
         </div>
     </div>
 
-    <!-- Modal Pop-up Animasi Universal (Pilihan Akun & Dropdown Form) -->
+    <!-- Modal Pop-up Animasi Universal -->
     <div id="modalPilihCustom" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-[60] transition-all duration-300">
     <div class="bg-white rounded-3xl max-w-xs w-full p-5 flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
         <div class="flex justify-between items-center mb-3">
@@ -252,7 +252,7 @@
     </div>
     </div>
 
-    <!-- Modal Open Ticket (Pilih User -> Pilih Transaksi -> Kirim Laporan) -->
+    <!-- Modal Open Ticket -->
     <div id="modalOpenTicket" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[85vh]">
             <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
@@ -264,7 +264,6 @@
             </div>
             
             <div class="space-y-3 text-xs overflow-y-auto pr-1 flex-grow">
-                <!-- 1. Pilih User Terlebih Dahulu -->
                 <div>
                     <label class="block font-semibold text-slate-500 mb-1">1. Pilih User / Akun <span class="text-rose-500">*</span></label>
                     <button type="button" onclick="bukaModalPilihCustom('ticket_user', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 font-semibold text-left flex justify-between items-center text-slate-700">
@@ -274,7 +273,6 @@
                     <input type="hidden" id="ticketUser" value="">
                 </div>
 
-                <!-- 2. Pilih Transaksi Milik User Tersebut -->
                 <div>
                     <label class="block font-semibold text-slate-500 mb-1">2. Pilih Transaksi yang Dilaporkan <span class="text-rose-500">*</span></label>
                     <div id="listPilihanTransaksiTicket" class="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50">
@@ -284,7 +282,6 @@
                     <input type="hidden" id="ticketDetailTransaksi" value="">
                 </div>
 
-                <!-- 3. Subjek & Pesan Kendala -->
                 <div>
                     <label class="block font-semibold text-slate-500 mb-1">3. Subjek Kendala</label>
                     <input type="text" id="ticketSubjek" placeholder="Contoh: Salah Nominal / Selisih Saldo" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:outline-none">
@@ -333,7 +330,6 @@
         let modelSudahSiap = false;
         let dataTransaksiGlobal = [];
 
-        // Di-set kosong agar saat refresh tidak langsung memilih bank tertentu secara otomatis
         let ewalletAktifLea = '';
         let ewalletAktifMelati = '';
         let targetModalCustom = '';
@@ -365,7 +361,6 @@
             }
         }
 
-        // Handler Modal Arsip Terpusat
         function bukaModalArsipUtama() {
             document.getElementById('filterArsipUser').value = ""; 
             document.getElementById('valFilterArsipUser').innerText = "-- Pilih Nama --";
@@ -378,7 +373,6 @@
             document.getElementById('modalArsipUtama').classList.add('hidden');
         }
 
-        // Handler Modal Open Ticket
         function bukaModalOpenTicket() {
             document.getElementById('ticketUser').value = "";
             document.getElementById('valTicketUser').innerText = "-- Pilih Nama User --";
@@ -516,7 +510,8 @@
                     const jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
                     
                     if (jenis === 'masuk') totalMasuk += nom;
-                    else totalKeluar += nom;
+                    else if (jenis === 'keluar') totalKeluar += nom;
+                    // jenis transfer_saldo tidak menambah total pengeluaran belanja murni arsip
 
                     container.innerHTML += `
                         <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex justify-between items-center gap-2 mb-1.5">
@@ -527,7 +522,7 @@
                                 </div>
                                 <p class="text-[11px] text-slate-400 mt-0.5">${item.catatan || '-'} • ${item.tanggal || '-'}</p>
                             </div>
-                            <span class="font-extrabold text-xs px-2 py-1 rounded-lg ${jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'}">${jenis === 'masuk' ? '+Rp' : '-Rp'} ${nom.toLocaleString('id-ID')}</span>
+                            <span class="font-extrabold text-xs px-2 py-1 rounded-lg ${jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : jenis === 'keluar' ? 'text-rose-600 bg-rose-50' : 'text-blue-600 bg-blue-50'}">${jenis === 'masuk' ? '+Rp' : jenis === 'keluar' ? '-Rp' : '⇄Rp'} ${nom.toLocaleString('id-ID')}</span>
                         </div>
                     `;
                 });
@@ -537,7 +532,6 @@
             document.getElementById('arsipTotalKeluar').innerText = `Rp ${totalKeluar.toLocaleString('id-ID')}`;
         }
 
-        // Handler Pop-up Universal
         function bukaModalPilihCustom(target, jenis) {
             targetModalCustom = target;
             const container = document.getElementById('containerModalCustom');
@@ -572,7 +566,8 @@
                 judul = "Pilih Jenis Transaksi";
                 listOpsi = [
                     { label: "Tambah Saldo (+)", val: "masuk" },
-                    { label: "Kurang Saldo (-)", val: "keluar" }
+                    { label: "Kurang Saldo (-)", val: "keluar" },
+                    { label: "Transfer Saldo / Koreksi (⇄)", val: "transfer_saldo" } // <-- Kategori dipindah ke sini
                 ];
             }
 
@@ -786,7 +781,8 @@
 
                 if (DISCORD_WEBHOOK_URL && fotoBlob) {
                     const discordData = new FormData();
-                    const sign = dataBaru.jenisTransaksi === 'masuk' ? '+ Rp' : '- Rp';
+                    const jenisVal = dataBaru.jenisTransaksi;
+                    const sign = jenisVal === 'masuk' ? '+ Rp' : jenisVal === 'keluar' ? '- Rp' : '⇄ Rp';
                     discordData.append("payload_json", JSON.stringify({ 
                         content: `🔔 **TRANSAKSI BARU**\n📁 Kategori: ${dataBaru.kategoriDompet}\n💳 Sumber/Tabungan: ${dataBaru.sumberDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
                     }));
@@ -865,7 +861,10 @@
                     const isMelati = namaUser.includes('MELATI');
 
                     if (kategori === 'bersama') {
-                        if (jenis === 'masuk') tBersama += nom; else tBersama -= nom;
+                        if (jenis === 'masuk') tBersama += nom; 
+                        else if (jenis === 'keluar') tBersama -= nom;
+                        // transfer_saldo pada bersama diabaikan dari penambahan/pengurangan saldo bersama secara murni jika tidak diperlukan, atau diperlakukan netral
+                        
                         if (jenis === 'keluar' && String(item.tanggal).includes(dateBulanIni)) {
                             keluarBersamaBulanIni += nom;
                         }
@@ -873,27 +872,35 @@
                         if (isMelati) {
                             if (cacheSaldoAkunMelati[sumber] !== undefined) {
                                 if (jenis === 'masuk') cacheSaldoAkunMelati[sumber] += nom;
-                                else {
+                                else if (jenis === 'keluar') {
                                     cacheSaldoAkunMelati[sumber] -= nom;
                                     if (String(item.tanggal).includes(dateBulanIni)) {
                                         cacheKeluarAkunMelatiBulanIni[sumber] += nom;
                                         totalKeluarMelatiBulanIni += nom;
                                     }
+                                } else if (jenis === 'transfer_saldo') {
+                                    // Transfer saldo / koreksi memperbarui saldo akun (bisa positif/tambah atau negatif/kurang tergantung konteks catatan/nominal, secara default mengurangi atau menyesuaikan saldo)
+                                    cacheSaldoAkunMelati[sumber] -= nom; 
                                 }
                             }
                         } else {
                             if (cacheSaldoAkunLea[sumber] !== undefined) {
                                 if (jenis === 'masuk') cacheSaldoAkunLea[sumber] += nom;
-                                else {
+                                else if (jenis === 'keluar') {
                                     cacheSaldoAkunLea[sumber] -= nom;
                                     if (String(item.tanggal).includes(dateBulanIni)) {
                                         cacheKeluarAkunLeaBulanIni[sumber] += nom;
                                         totalKeluarLeaBulanIni += nom;
                                     }
+                                } else if (jenis === 'transfer_saldo') {
+                                    cacheSaldoAkunLea[sumber] -= nom;
                                 }
                             }
                         }
                     }
+
+                    let badgeColor = jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : jenis === 'keluar' ? 'text-rose-600 bg-rose-50' : 'text-blue-600 bg-blue-50';
+                    let signText = jenis === 'masuk' ? '+ Rp' : jenis === 'keluar' ? '- Rp' : '⇄ Rp';
 
                     listHistori.innerHTML += `
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3 py-1 gap-2">
@@ -905,7 +912,7 @@
                                 </div>
                                 <p class="text-xs text-slate-400 mt-0.5">${item.catatan || '-'} • ${item.tanggal || '-'}</p>
                             </div>
-                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'}">${jenis === 'masuk' ? '+ Rp' : '- Rp'} ${nom.toLocaleString('id-ID')}</span>
+                            <span class="text-sm font-extrabold px-2 py-1 rounded-lg ${badgeColor}">${signText} ${nom.toLocaleString('id-ID')}</span>
                         </div>`;
                 });
 
