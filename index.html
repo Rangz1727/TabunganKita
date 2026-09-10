@@ -76,8 +76,8 @@
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <p class="text-[11px] uppercase tracking-wider text-indigo-600 font-bold">Pribadi: LEA</p>
-                            <button onclick="bukaModalPilihAkun('LEA')" class="flex items-center gap-1 text-[11px] bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full font-bold hover:bg-indigo-100 transition">
-                                <span id="labelEwalletLea">DANA</span>
+                            <button onclick="bukaModalPilihCustom('LEA', 'akun')" class="flex items-center gap-1 text-[11px] bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full font-bold hover:bg-indigo-100 transition">
+                                <span id="labelEwalletLea">Pilih Akun</span>
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                         </div>
@@ -92,10 +92,6 @@
                             <span class="text-slate-500">Keluar Akun Ini</span>
                             <span id="keluarAkunLeaBulanIni" class="font-bold text-rose-600">Rp 0</span>
                         </div>
-                        <div class="flex justify-between items-center pt-1 border-t border-slate-50">
-                            <span id="labelRekapLea" class="text-slate-400">Rekap Bulan Lalu</span>
-                            <p id="rekapLea" class="font-bold text-emerald-600">Rp 0</p>
-                        </div>
                     </div>
                 </div>
 
@@ -104,8 +100,8 @@
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <p class="text-[11px] uppercase tracking-wider text-violet-600 font-bold">Pribadi: MELATI</p>
-                            <button onclick="bukaModalPilihAkun('MELATI')" class="flex items-center gap-1 text-[11px] bg-violet-50 text-violet-600 px-2.5 py-1 rounded-full font-bold hover:bg-violet-100 transition">
-                                <span id="labelEwalletMelati">DANA</span>
+                            <button onclick="bukaModalPilihCustom('MELATI', 'akun')" class="flex items-center gap-1 text-[11px] bg-violet-50 text-violet-600 px-2.5 py-1 rounded-full font-bold hover:bg-violet-100 transition">
+                                <span id="labelEwalletMelati">Pilih Akun</span>
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                         </div>
@@ -120,64 +116,55 @@
                             <span class="text-slate-500">Keluar Akun Ini</span>
                             <span id="keluarAkunMelatiBulanIni" class="font-bold text-rose-600">Rp 0</span>
                         </div>
-                        <div class="flex justify-between items-center pt-1 border-t border-slate-50">
-                            <span id="labelRekapMelati" class="text-slate-400">Rekap Bulan Lalu</span>
-                            <p id="rekapMelati" class="font-bold text-emerald-600">Rp 0</p>
-                        </div>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- Form Catat Transaksi Baru -->
+        <!-- Form Catat Transaksi Baru dengan Pop-up Animasi Pilihan -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
             <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wider">Catat Transaksi Baru</h3>
             <div class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Siapa yang transaksi?</label>
-                    <select id="namaUser" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
-                        <option value="" disabled selected>-- Pilih yang transaksi --</option>
-                        <option value="LEA">LEA</option>
-                        <option value="MELATI">MELATI</option>
-                    </select>
+                    <button type="button" onclick="bukaModalPilihCustom('form_user', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 flex justify-between items-center text-slate-700 font-medium hover:bg-slate-100 transition">
+                        <span id="valNamaUser">-- Pilih yang transaksi --</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="namaUser" value="">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Kategori Dompet</label>
-                    <select id="kategoriDompet" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
-                        <option value="" disabled selected>-- Pilih kategori dompet --</option>
-                        <option value="bersama">Tabungan Pure Bersama</option>
-                        <option value="pribadi">Tabungan Pribadi (Sesuai nama di atas)</option>
-                    </select>
+                    <button type="button" onclick="bukaModalPilihCustom('form_kategori', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 flex justify-between items-center text-slate-700 font-medium hover:bg-slate-100 transition">
+                        <span id="valKategoriDompet">-- Pilih kategori dompet --</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="kategoriDompet" value="">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1">Sumber Akun / Bank</label>
-                    <!-- Opsi Tabungan Awal Murni dihapus dari dropdown input agar transaksi dompet tidak nyasar -->
-                    <select id="sumberDompet" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
-                        <option value="" disabled selected>-- Pilih sumber dompet --</option>
-                        <option value="BCA">BCA</option>
-                        <option value="Mandiri">Mandiri</option>
-                        <option value="GoPay">GoPay</option>
-                        <option value="DANA">DANA</option>
-                        <option value="ShopeePay">ShopeePay</option>
-                        <option value="Cash/Tunai">Cash / Tunai</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Sumber Akun / Bank & Kategori Tabungan</label>
+                    <button type="button" onclick="bukaModalPilihCustom('form_sumber', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 flex justify-between items-center text-slate-700 font-medium hover:bg-slate-100 transition">
+                        <span id="valSumberDompet">-- Pilih nama user terlebih dahulu --</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="sumberDompet" value="">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Jenis Transaksi</label>
-                    <select id="jenisTransaksi" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
-                        <option value="" disabled selected>-- Pilih jenis transaksi --</option>
-                        <option value="masuk">Tambah Saldo (+)</option>
-                        <option value="keluar">Kurang Saldo (-)</option>
-                    </select>
+                    <button type="button" onclick="bukaModalPilihCustom('form_jenis', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 flex justify-between items-center text-slate-700 font-medium hover:bg-slate-100 transition">
+                        <span id="valJenisTransaksi">-- Pilih jenis transaksi --</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="jenisTransaksi" value="">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Nominal (Rp)</label>
-                    <input type="text" id="nominal" placeholder="Contoh: 50.000" oninput="formatInputNominal(this)" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
+                    <input type="text" id="nominal" placeholder="Contoh: 50.000" oninput="formatInputNominal(this)" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all duration-200">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Catatan</label>
-                    <input type="text" id="catatan" placeholder="Misal: Top up DANA / Beli jajan" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white transition">
+                    <input type="text" id="catatan" placeholder="Misal: Top up / Beli jajan" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all duration-200">
                 </div>
                 <button onclick="bukaKamera()" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl shadow-md shadow-indigo-100 hover:bg-indigo-700 transition">
                     📸 Ambil Foto Verifikasi Muka
@@ -185,21 +172,130 @@
             </div>
         </div>
 
-        <!-- Histori Transaksi -->
+        <!-- Histori Transaksi Ringkas (Tombol Open Ticket di Samping Judul) -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
-            <h3 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider">Histori Semua Transaksi</h3>
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider">Histori Semua Transaksi</h3>
+                <button onclick="bukaModalOpenTicket()" class="text-[11px] bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full font-bold hover:bg-indigo-100 transition flex items-center gap-1 shadow-sm">
+                    🎫 Open Ticket
+                </button>
+            </div>
             <div id="listHistori" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+        </div>
+
+        <!-- 1 Tombol Arsip Terpusat di Paling Bawah -->
+        <div class="mb-6">
+            <button onclick="bukaModalArsipUtama()" class="w-full bg-white border border-indigo-200 text-indigo-600 font-bold py-3.5 px-4 rounded-2xl shadow-sm hover:bg-indigo-50 transition flex items-center justify-center gap-2 text-sm">
+                <span>📂 Buka Arsip Rinci Transaksi</span>
+            </button>
         </div>
     </div>
 
-    <!-- Modal Pop-up Pilih Akun -->
-    <div id="modalPilihAkun" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-3xl max-w-xs w-full p-5 flex flex-col shadow-2xl">
-            <div class="flex justify-between items-center mb-3">
-                <h3 id="modalAkunTitle" class="font-bold text-slate-700 text-sm uppercase tracking-wider">Pilih Akun</h3>
-                <button onclick="tutupModalPilihAkun()" class="text-slate-400 hover:text-slate-600 font-bold text-base">&times;</button>
+    <!-- Modal Arsip Rinci Terpusat -->
+    <div id="modalArsipUtama" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 flex flex-col shadow-2xl max-h-[85vh]">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                <div>
+                    <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider">Arsip Rinci Transaksi</h3>
+                    <p class="text-[11px] text-slate-400">Pilih nama user terlebih dahulu untuk melihat arsip.</p>
+                </div>
+                <button onclick="tutupModalArsipUtama()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            <div id="containerModalAkun" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
+
+            <!-- Filter User & Bulan -->
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-400 mb-1">Pilih User <span class="text-rose-500">*</span></label>
+                    <button type="button" onclick="bukaModalPilihCustom('filter_arsip_user', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2 text-xs bg-slate-50 font-semibold text-left flex justify-between items-center text-slate-700">
+                        <span id="valFilterArsipUser">-- Pilih Nama --</span>
+                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="filterArsipUser" value="">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-400 mb-1">Pilih Bulan</label>
+                    <select id="filterArsipBulan" onchange="renderIsiArsipUtama()" class="w-full border border-slate-200 rounded-xl p-2 text-xs bg-slate-50 font-semibold focus:outline-none">
+                        <option value="">Semua Bulan</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Card Total Pemasukan & Pengeluaran pada Arsip Terpilih -->
+            <div class="grid grid-cols-2 gap-2 mb-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Total Masuk</p>
+                    <p id="arsipTotalMasuk" class="text-sm font-black text-emerald-600">Rp 0</p>
+                </div>
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Total Keluar</p>
+                    <p id="arsipTotalKeluar" class="text-sm font-black text-rose-600">Rp 0</p>
+                </div>
+            </div>
+
+            <!-- List Detail Transaksi Arsip -->
+            <div id="listArsipUtamaDetail" class="space-y-2 text-xs overflow-y-auto pr-1 flex-grow max-h-60 my-1">
+                <p class="text-slate-400 text-center py-4">Silakan pilih nama user terlebih dahulu.</p>
+            </div>
+
+            <button onclick="tutupModalArsipUtama()" class="w-full mt-3 bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-200 transition">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Pop-up Animasi Universal (Pilihan Akun & Dropdown Form) -->
+    <div id="modalPilihCustom" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-[60] transition-all duration-300">
+    <div class="bg-white rounded-3xl max-w-xs w-full p-5 flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex justify-between items-center mb-3">
+            <h3 id="modalCustomTitle" class="font-bold text-slate-700 text-sm uppercase tracking-wider">Pilih Opsi</h3>
+            <button onclick="tutupModalPilihCustom()" class="text-slate-400 hover:text-slate-600 font-bold text-base">&times;</button>
+        </div>
+        <div id="containerModalCustom" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
+    </div>
+    </div>
+
+    <!-- Modal Open Ticket (Pilih User -> Pilih Transaksi -> Kirim Laporan) -->
+    <div id="modalOpenTicket" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[85vh]">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                <div>
+                    <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider">🎫 Open Ticket Bantuan</h3>
+                    <p class="text-[11px] text-slate-400">Pilih user dan transaksi yang ingin dilaporkan.</p>
+                </div>
+                <button onclick="tutupModalOpenTicket()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+            </div>
+            
+            <div class="space-y-3 text-xs overflow-y-auto pr-1 flex-grow">
+                <!-- 1. Pilih User Terlebih Dahulu -->
+                <div>
+                    <label class="block font-semibold text-slate-500 mb-1">1. Pilih User / Akun <span class="text-rose-500">*</span></label>
+                    <button type="button" onclick="bukaModalPilihCustom('ticket_user', 'pilih')" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 font-semibold text-left flex justify-between items-center text-slate-700">
+                        <span id="valTicketUser">-- Pilih Nama User --</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <input type="hidden" id="ticketUser" value="">
+                </div>
+
+                <!-- 2. Pilih Transaksi Milik User Tersebut -->
+                <div>
+                    <label class="block font-semibold text-slate-500 mb-1">2. Pilih Transaksi yang Dilaporkan <span class="text-rose-500">*</span></label>
+                    <div id="listPilihanTransaksiTicket" class="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50">
+                        <p class="text-slate-400 text-center py-2">Pilih user terlebih dahulu di atas.</p>
+                    </div>
+                    <input type="hidden" id="ticketIdTransaksi" value="">
+                    <input type="hidden" id="ticketDetailTransaksi" value="">
+                </div>
+
+                <!-- 3. Subjek & Pesan Kendala -->
+                <div>
+                    <label class="block font-semibold text-slate-500 mb-1">3. Subjek Kendala</label>
+                    <input type="text" id="ticketSubjek" placeholder="Contoh: Salah Nominal / Selisih Saldo" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-500 mb-1">4. Detail Pesan / Alasan Laporan</label>
+                    <textarea id="ticketPesan" rows="3" placeholder="Jelaskan detail kendala pada transaksi ini..." class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:outline-none"></textarea>
+                </div>
+            </div>
+
+            <button onclick="kirimOpenTicket()" class="w-full mt-4 bg-indigo-600 text-white font-semibold py-2.5 rounded-xl hover:bg-indigo-700 transition flex-shrink-0">Kirim Tiket 🚀</button>
         </div>
     </div>
 
@@ -237,17 +333,19 @@
         let modelSudahSiap = false;
         let dataTransaksiGlobal = [];
 
-        // Default langsung ke DANA agar card tidak kosong saat pertama buka
-        let ewalletAktifLea = 'DANA';
-        let ewalletAktifMelati = 'DANA';
-        let currentUserModal = '';
+        // Di-set kosong agar saat refresh tidak langsung memilih bank tertentu secara otomatis
+        let ewalletAktifLea = '';
+        let ewalletAktifMelati = '';
+        let targetModalCustom = '';
 
-        let cacheSaldoAkunLea = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
-        let cacheSaldoAkunMelati = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
-        let cacheKeluarAkunLeaBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
-        let cacheKeluarAkunMelatiBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+        const akunLea = ["SeaBank", "DANA", "Bank Jatim", "Cash/Tunai", "Tabungan Murni"];
+        const akunMelati = ["SeaBank", "DANA", "Mandiri", "Cash/Tunai", "Tabungan Murni"];
 
-        const daftarAkun = ["BCA", "Mandiri", "GoPay", "DANA", "ShopeePay", "Cash/Tunai"];
+        let cacheSaldoAkunLea = { "SeaBank": 0, "DANA": 0, "Bank Jatim": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
+        let cacheSaldoAkunMelati = { "SeaBank": 0, "DANA": 0, "Mandiri": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
+        
+        let cacheKeluarAkunLeaBulanIni = { "SeaBank": 0, "DANA": 0, "Bank Jatim": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
+        let cacheKeluarAkunMelatiBulanIni = { "SeaBank": 0, "DANA": 0, "Mandiri": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
 
         window.onload = async function() {
             setTimeout(() => {
@@ -267,54 +365,300 @@
             }
         }
 
-        function renderPilihanEwalletInternal() {
-            document.getElementById('labelEwalletLea').innerText = ewalletAktifLea;
-            let saldoLeaVal = cacheSaldoAkunLea[ewalletAktifLea] || 0;
-            document.getElementById('saldoLeaTerpilih').innerText = `Rp ${saldoLeaVal.toLocaleString('id-ID')}`;
-            let keluarLeaAkunVal = cacheKeluarAkunLeaBulanIni[ewalletAktifLea] || 0;
-            document.getElementById('keluarAkunLeaBulanIni').innerText = `Rp ${keluarLeaAkunVal.toLocaleString('id-ID')}`;
-
-            document.getElementById('labelEwalletMelati').innerText = ewalletAktifMelati;
-            let saldoMelatiVal = cacheSaldoAkunMelati[ewalletAktifMelati] || 0;
-            document.getElementById('saldoMelatiTerpilih').innerText = `Rp ${saldoMelatiVal.toLocaleString('id-ID')}`;
-            let keluarMelatiAkunVal = cacheKeluarAkunMelatiBulanIni[ewalletAktifMelati] || 0;
-            document.getElementById('keluarAkunMelatiBulanIni').innerText = `Rp ${keluarMelatiAkunVal.toLocaleString('id-ID')}`;
+        // Handler Modal Arsip Terpusat
+        function bukaModalArsipUtama() {
+            document.getElementById('filterArsipUser').value = ""; 
+            document.getElementById('valFilterArsipUser').innerText = "-- Pilih Nama --";
+            updateOpsiBulanArsip();
+            renderIsiArsipUtama();
+            document.getElementById('modalArsipUtama').classList.remove('hidden');
         }
 
-        function bukaModalPilihAkun(user) {
-            currentUserModal = user;
-            const container = document.getElementById('containerModalAkun');
+        function tutupModalArsipUtama() {
+            document.getElementById('modalArsipUtama').classList.add('hidden');
+        }
+
+        // Handler Modal Open Ticket
+        function bukaModalOpenTicket() {
+            document.getElementById('ticketUser').value = "";
+            document.getElementById('valTicketUser').innerText = "-- Pilih Nama User --";
+            document.getElementById('ticketIdTransaksi').value = "";
+            document.getElementById('ticketDetailTransaksi').value = "";
+            document.getElementById('listPilihanTransaksiTicket').innerHTML = `<p class="text-slate-400 text-center py-2">Pilih user terlebih dahulu di atas.</p>`;
+            document.getElementById('ticketSubjek').value = "";
+            document.getElementById('ticketPesan').value = "";
+            document.getElementById('modalOpenTicket').classList.remove('hidden');
+        }
+
+        function tutupModalOpenTicket() {
+            document.getElementById('modalOpenTicket').classList.add('hidden');
+        }
+
+        function renderListTransaksiTicket(userPilihan) {
+            const container = document.getElementById('listPilihanTransaksiTicket');
+            container.innerHTML = '';
+
+            const filtered = dataTransaksiGlobal.filter(item => {
+                let namaUser = String(item.namaUser || '').trim().toUpperCase();
+                return userPilihan === 'MELATI' ? namaUser.includes('MELATI') : !namaUser.includes('MELATI');
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-center py-2 text-xs">Tidak ada riwayat transaksi untuk user ini.</p>`;
+                return;
+            }
+
+            filtered.slice().reverse().forEach((item, index) => {
+                const nom = Number(item.nominal) || 0;
+                const jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
+                const infoStr = `${item.tanggal} | ${item.sumberDompet} | ${jenis.toUpperCase()} Rp ${nom.toLocaleString('id-ID')} | Catatan: ${item.catatan}`;
+
+                container.innerHTML += `
+                    <label class="flex items-start gap-2 p-2 bg-white rounded-lg border border-slate-200 cursor-pointer hover:bg-indigo-50 transition">
+                        <input type="radio" name="pilihTransaksiTicket" value="${index}" onchange="pilihTransaksiTicketItem('${infoStr}')" class="mt-0.5">
+                        <div class="text-[11px]">
+                            <p class="font-bold text-slate-700">${item.sumberDompet} (${item.kategoriDompet}) - <span class="${jenis === 'masuk' ? 'text-emerald-600' : 'text-rose-600'}">${jenis === 'masuk' ? '+' : '-'}Rp ${nom.toLocaleString('id-ID')}</span></p>
+                            <p class="text-slate-400">${item.catatan || '-'} • ${item.tanggal}</p>
+                        </div>
+                    </label>
+                `;
+            });
+        }
+
+        function pilihTransaksiTicketItem(info) {
+            document.getElementById('ticketDetailTransaksi').value = info;
+        }
+
+        async function kirimOpenTicket() {
+            const user = document.getElementById('ticketUser').value;
+            const detailTx = document.getElementById('ticketDetailTransaksi').value;
+            const sub = document.getElementById('ticketSubjek').value;
+            const pesan = document.getElementById('ticketPesan').value;
+
+            if(!user) {
+                alert('Silakan pilih user terlebih dahulu.');
+                return;
+            }
+            if(!detailTx) {
+                alert('Silakan pilih transaksi yang ingin dilaporkan.');
+                return;
+            }
+            if(!sub || !pesan) {
+                alert('Mohon isi subjek dan detail pesan laporan.');
+                return;
+            }
+
+            if (DISCORD_WEBHOOK_URL) {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        content: `🎫 **OPEN TICKET / LAPORAN KENDALA TRANSAKSI**\n👤 User: ${user}\n📌 Transaksi Dilaporkan:\n\`${detailTx}\`\n📋 Subjek: ${sub}\n💬 Pesan: ${pesan}` 
+                    })
+                });
+            }
+            alert('Tiket laporan transaksi berhasil dikirim!');
+            tutupModalOpenTicket();
+        }
+
+        function updateOpsiBulanArsip() {
+            const selectBulan = document.getElementById('filterArsipBulan');
+            let bulanSet = new Set();
+            
+            dataTransaksiGlobal.forEach(item => {
+                if (item.tanggal) {
+                    let parts = item.tanggal.split(' ');
+                    if (parts.length >= 3) {
+                        bulanSet.add(`${parts[1]} ${parts[2].replace(',', '')}`);
+                    }
+                }
+            });
+
+            selectBulan.innerHTML = '<option value="">Semua Bulan</option>';
+            bulanSet.forEach(b => {
+                selectBulan.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+        }
+
+        function renderIsiArsipUtama() {
+            const userPilihan = document.getElementById('filterArsipUser').value;
+            const bulanPilihan = document.getElementById('filterArsipBulan').value;
+            const container = document.getElementById('listArsipUtamaDetail');
+            
+            container.innerHTML = '';
+
+            if (!userPilihan) {
+                container.innerHTML = `<p class="text-slate-400 text-center py-4 text-xs">Silakan pilih nama user terlebih dahulu.</p>`;
+                document.getElementById('arsipTotalMasuk').innerText = `Rp 0`;
+                document.getElementById('arsipTotalKeluar').innerText = `Rp 0`;
+                return;
+            }
+
+            const filtered = dataTransaksiGlobal.filter(item => {
+                let namaUser = String(item.namaUser || '').trim().toUpperCase();
+                let matchUser = userPilihan === 'MELATI' ? namaUser.includes('MELATI') : !namaUser.includes('MELATI');
+                
+                let matchBulan = true;
+                if (bulanPilihan) {
+                    matchBulan = item.tanggal && item.tanggal.includes(bulanPilihan);
+                }
+                return matchUser && matchBulan;
+            });
+
+            let totalMasuk = 0;
+            let totalKeluar = 0;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-center py-4 text-xs">Tidak ada arsip untuk filter ini.</p>`;
+            } else {
+                filtered.slice().reverse().forEach(item => {
+                    const nom = Number(item.nominal) || 0;
+                    const jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
+                    
+                    if (jenis === 'masuk') totalMasuk += nom;
+                    else totalKeluar += nom;
+
+                    container.innerHTML += `
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex justify-between items-center gap-2 mb-1.5">
+                            <div>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold text-slate-700">${item.sumberDompet || 'Akun'}</span>
+                                    <span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded">${item.kategoriDompet || 'bersama'}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400 mt-0.5">${item.catatan || '-'} • ${item.tanggal || '-'}</p>
+                            </div>
+                            <span class="font-extrabold text-xs px-2 py-1 rounded-lg ${jenis === 'masuk' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'}">${jenis === 'masuk' ? '+Rp' : '-Rp'} ${nom.toLocaleString('id-ID')}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('arsipTotalMasuk').innerText = `Rp ${totalMasuk.toLocaleString('id-ID')}`;
+            document.getElementById('arsipTotalKeluar').innerText = `Rp ${totalKeluar.toLocaleString('id-ID')}`;
+        }
+
+        // Handler Pop-up Universal
+        function bukaModalPilihCustom(target, jenis) {
+            targetModalCustom = target;
+            const container = document.getElementById('containerModalCustom');
             container.innerHTML = '';
             
-            const akunAktif = user === 'LEA' ? ewalletAktifLea : ewalletAktifMelati;
-            document.getElementById('modalAkunTitle').innerText = `Pilih Akun - ${user}`;
+            let judul = "Pilih Opsi";
+            let listOpsi = [];
 
-            daftarAkun.forEach(akun => {
-                const isAktif = akun === akunAktif;
-                const activeClass = isAktif ? 'bg-indigo-50 text-indigo-600 font-bold border-indigo-200' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-100';
-                
+            if (target === 'LEA' || target === 'MELATI') {
+                judul = `Pilih Akun - ${target}`;
+                listOpsi = target === 'LEA' ? akunLea : akunMelati;
+            } else if (target === 'form_user' || target === 'filter_arsip_user' || target === 'ticket_user') {
+                judul = target === 'ticket_user' ? "Pilih User Laporan" : "Pilih Nama";
+                listOpsi = ["LEA", "MELATI"];
+            } else if (target === 'form_kategori') {
+                judul = "Pilih Kategori Dompet";
+                listOpsi = [
+                    { label: "Tabungan Pure Bersama", val: "bersama" },
+                    { label: "Tabungan Pribadi", val: "pribadi" },
+                    { label: "Tabungan Darurat / Cadangan", val: "darurat" },
+                    { label: "Tabungan Investasi", val: "investasi" }
+                ];
+            } else if (target === 'form_sumber') {
+                let userVal = document.getElementById('namaUser').value;
+                if (!userVal) {
+                    alert('Pilih nama user terlebih dahulu!');
+                    return;
+                }
+                judul = "Pilih Sumber Akun";
+                listOpsi = userVal === 'LEA' ? akunLea : akunMelati;
+            } else if (target === 'form_jenis') {
+                judul = "Pilih Jenis Transaksi";
+                listOpsi = [
+                    { label: "Tambah Saldo (+)", val: "masuk" },
+                    { label: "Kurang Saldo (-)", val: "keluar" }
+                ];
+            }
+
+            document.getElementById('modalCustomTitle').innerText = judul;
+
+            listOpsi.forEach(opt => {
+                let label = typeof opt === 'object' ? opt.label : opt;
+                let val = typeof opt === 'object' ? opt.val : opt;
+
                 container.innerHTML += `
-                    <button onclick="pilihAkunDariModal('${akun}')" class="w-full p-2.5 rounded-xl text-xs border text-left flex justify-between items-center transition ${activeClass}">
-                        <span>${akun}</span>
-                        ${isAktif ? '<span class="text-indigo-600">✓</span>' : ''}
+                    <button type="button" onclick="pilihOpsiCustom('${val}', '${label}')" class="w-full p-2.5 rounded-xl text-xs border border-slate-100 bg-slate-50 text-slate-700 font-semibold text-left hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition">
+                        ${label}
                     </button>
                 `;
             });
-            document.getElementById('modalPilihAkun').classList.remove('hidden');
+
+            document.getElementById('modalPilihCustom').classList.remove('hidden');
         }
 
-        function tutupModalPilihAkun() {
-            document.getElementById('modalPilihAkun').classList.add('hidden');
+        function tutupModalPilihCustom() {
+            document.getElementById('modalPilihCustom').classList.add('hidden');
         }
 
-        function pilihAkunDariModal(akun) {
-            if (currentUserModal === 'LEA') {
-                ewalletAktifLea = akun;
-            } else {
-                ewalletAktifMelati = akun;
+        function pilihOpsiCustom(val, label) {
+            if (targetModalCustom === 'LEA') {
+                ewalletAktifLea = val;
+                renderPilihanEwalletInternal();
+            } else if (targetModalCustom === 'MELATI') {
+                ewalletAktifMelati = val;
+                renderPilihanEwalletInternal();
+            } else if (targetModalCustom === 'filter_arsip_user') {
+                document.getElementById('filterArsipUser').value = val;
+                document.getElementById('valFilterArsipUser').innerText = label;
+                renderIsiArsipUtama();
+            } else if (targetModalCustom === 'ticket_user') {
+                document.getElementById('ticketUser').value = val;
+                document.getElementById('valTicketUser').innerText = label;
+                document.getElementById('ticketIdTransaksi').value = "";
+                document.getElementById('ticketDetailTransaksi').value = "";
+                renderListTransaksiTicket(val);
+            } else if (targetModalCustom === 'form_user') {
+                document.getElementById('namaUser').value = val;
+                document.getElementById('valNamaUser').innerText = label;
+                document.getElementById('valNamaUser').className = "text-slate-800 font-semibold";
+                document.getElementById('sumberDompet').value = "";
+                document.getElementById('valSumberDompet').innerText = "-- Pilih sumber atau pos tabungan --";
+            } else if (targetModalCustom === 'form_kategori') {
+                document.getElementById('kategoriDompet').value = val;
+                document.getElementById('valKategoriDompet').innerText = label;
+                document.getElementById('valKategoriDompet').className = "text-slate-800 font-semibold";
+            } else if (targetModalCustom === 'form_sumber') {
+                document.getElementById('sumberDompet').value = val;
+                document.getElementById('valSumberDompet').innerText = label;
+                document.getElementById('valSumberDompet').className = "text-slate-800 font-semibold";
+            } else if (targetModalCustom === 'form_jenis') {
+                document.getElementById('jenisTransaksi').value = val;
+                document.getElementById('valJenisTransaksi').innerText = label;
+                document.getElementById('valJenisTransaksi').className = "text-slate-800 font-semibold";
             }
-            tutupModalPilihAkun();
-            renderPilihanEwalletInternal();
+            tutupModalPilihCustom();
+        }
+
+        function renderPilihanEwalletInternal() {
+            if (ewalletAktifLea) {
+                document.getElementById('labelEwalletLea').innerText = ewalletAktifLea;
+                let saldoLeaVal = cacheSaldoAkunLea[ewalletAktifLea] || 0;
+                document.getElementById('saldoLeaTerpilih').innerText = `Rp ${saldoLeaVal.toLocaleString('id-ID')}`;
+                let keluarLeaAkunVal = cacheKeluarAkunLeaBulanIni[ewalletAktifLea] || 0;
+                document.getElementById('keluarAkunLeaBulanIni').innerText = `Rp ${keluarLeaAkunVal.toLocaleString('id-ID')}`;
+            } else {
+                document.getElementById('labelEwalletLea').innerText = 'Pilih Akun';
+                document.getElementById('saldoLeaTerpilih').innerText = 'Rp 0';
+                document.getElementById('keluarAkunLeaBulanIni').innerText = 'Rp 0';
+            }
+
+            if (ewalletAktifMelati) {
+                document.getElementById('labelEwalletMelati').innerText = ewalletAktifMelati;
+                let saldoMelatiVal = cacheSaldoAkunMelati[ewalletAktifMelati] || 0;
+                document.getElementById('saldoMelatiTerpilih').innerText = `Rp ${saldoMelatiVal.toLocaleString('id-ID')}`;
+                let keluarMelatiAkunVal = cacheKeluarAkunMelatiBulanIni[ewalletAktifMelati] || 0;
+                document.getElementById('keluarAkunMelatiBulanIni').innerText = `Rp ${keluarMelatiAkunVal.toLocaleString('id-ID')}`;
+            } else {
+                document.getElementById('labelEwalletMelati').innerText = 'Pilih Akun';
+                document.getElementById('saldoMelatiTerpilih').innerText = 'Rp 0';
+                document.getElementById('keluarAkunMelatiBulanIni').innerText = 'Rp 0';
+            }
         }
 
         function formatInputNominal(input) {
@@ -444,18 +788,31 @@
                     const discordData = new FormData();
                     const sign = dataBaru.jenisTransaksi === 'masuk' ? '+ Rp' : '- Rp';
                     discordData.append("payload_json", JSON.stringify({ 
-                        content: `🔔 **TRANSAKSI BARU**\n📁 Dompet: ${dataBaru.kategoriDompet}\n💳 Akun: ${dataBaru.sumberDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
+                        content: `🔔 **TRANSAKSI BARU**\n📁 Kategori: ${dataBaru.kategoriDompet}\n💳 Sumber/Tabungan: ${dataBaru.sumberDompet}\n👤 Oleh: ${dataBaru.namaUser}\n💰 ${sign} ${dataBaru.nominal.toLocaleString('id-ID')}\n📝 ${dataBaru.catatan}` 
                     }));
                     discordData.append("file", fotoBlob, "vermuk.png");
                     await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: discordData });
                 }
 
-                document.getElementById('namaUser').selectedIndex = 0;
-                document.getElementById('kategoriDompet').selectedIndex = 0;
-                document.getElementById('sumberDompet').selectedIndex = 0;
-                document.getElementById('jenisTransaksi').selectedIndex = 0;
+                document.getElementById('namaUser').value = "";
+                document.getElementById('valNamaUser').innerText = "-- Pilih yang transaksi --";
+                document.getElementById('valNamaUser').className = "text-slate-700 font-medium";
+
+                document.getElementById('kategoriDompet').value = "";
+                document.getElementById('valKategoriDompet').innerText = "-- Pilih kategori dompet --";
+                document.getElementById('valKategoriDompet').className = "text-slate-700 font-medium";
+
+                document.getElementById('sumberDompet').value = "";
+                document.getElementById('valSumberDompet').innerText = "-- Pilih nama user terlebih dahulu --";
+                document.getElementById('valSumberDompet').className = "text-slate-700 font-medium";
+
+                document.getElementById('jenisTransaksi').value = "";
+                document.getElementById('valJenisTransaksi').innerText = "-- Pilih jenis transaksi --";
+                document.getElementById('valJenisTransaksi').className = "text-slate-700 font-medium";
+
                 document.getElementById('nominal').value = '';
                 document.getElementById('catatan').value = '';
+                
                 tutupKamera();
                 setTimeout(ambilData, 2000);
             } catch (error) {
@@ -483,15 +840,12 @@
                 let totalKeluarLeaBulanIni = 0;
                 let totalKeluarMelatiBulanIni = 0;
                 
-                cacheSaldoAkunLea = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
-                cacheSaldoAkunMelati = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+                cacheSaldoAkunLea = { "SeaBank": 0, "DANA": 0, "Bank Jatim": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
+                cacheSaldoAkunMelati = { "SeaBank": 0, "DANA": 0, "Mandiri": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
                 
-                cacheKeluarAkunLeaBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
-                cacheKeluarAkunMelatiBulanIni = { "BCA": 0, "Mandiri": 0, "GoPay": 0, "DANA": 0, "ShopeePay": 0, "Cash/Tunai": 0 };
+                cacheKeluarAkunLeaBulanIni = { "SeaBank": 0, "DANA": 0, "Bank Jatim": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
+                cacheKeluarAkunMelatiBulanIni = { "SeaBank": 0, "DANA": 0, "Mandiri": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
                 
-                let rekapBulananMap = {};
-                let rekapLeaMap = {};
-                let rekapMelatiMap = {};
                 const dateBulanIni = new Date().toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
 
                 if (loadingOverlay) loadingOverlay.classList.add('hidden');
@@ -502,7 +856,7 @@
                     return;
                 }
 
-                dataTransaksiGlobal.slice().reverse().forEach((item, indexTerbalik) => {
+                dataTransaksiGlobal.slice().reverse().forEach((item) => {
                     const nom = Number(item.nominal) || 0;
                     let namaUser = String(item.namaUser || 'LEA').trim().toUpperCase();
                     const kategori = String(item.kategoriDompet || 'bersama').trim().toLowerCase();
@@ -560,6 +914,10 @@
                 document.getElementById('keluarBersama').innerText = `Rp ${keluarBersamaBulanIni.toLocaleString('id-ID')}`;
                 document.getElementById('keluarLea').innerText = `Rp ${totalKeluarLeaBulanIni.toLocaleString('id-ID')}`;
                 document.getElementById('keluarMelati').innerText = `Rp ${totalKeluarMelatiBulanIni.toLocaleString('id-ID')}`;
+
+                if (!document.getElementById('modalArsipUtama').classList.contains('hidden')) {
+                    renderIsiArsipUtama();
+                }
 
             } catch (error) {
                 if (loadingOverlay) loadingOverlay.classList.add('hidden');
