@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabungan Kita & Pribadi + Mini-Game</title>
+    <title>Tabungan Kita & Pribadi + 5 Weekly Mystery Quests</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1/dist/face-api.js"></script>
     <style>
@@ -33,7 +33,11 @@
     <div class="max-w-md mx-auto p-4 sm:p-6">
         <header class="text-center mb-6">
             <h1 class="text-2xl font-bold tracking-tight text-indigo-600">💰 Tabungan Kita</h1>
+<<<<<<< HEAD
+            <p class="text-xs text-slate-400 mt-0.5">Semangat Nabung nya</p>
+=======
             <p class="text-xs text-slate-400 mt-0.5">Financial Tracker Elegan & Terpusat</p>
+>>>>>>> 6a5317507786370f3921157fa6724c5c31f5c7ad
         </header>
 
         <div class="space-y-4 mb-6">
@@ -202,124 +206,59 @@
         </div>
     </div>
 
-    <!-- ================= FLOATING MINI-GAME KOTAK MISTERI (Disesuaikan Tema Utama & Animasi) ================= -->
+    <!-- ================= FLOATING 5 WEEKLY MYSTERY QUESTS ================= -->
     <div class="fixed bottom-5 right-5 z-40">
-        <!-- Tombol Mengambang Mini-Game (Diubah warnanya selaras ke nuansa Indigo-Violet / Tema Utama) -->
         <button id="miniGameBtn" class="relative flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-600 text-white rounded-full shadow-2xl hover:scale-110 active:scale-95 hover:shadow-indigo-300 transition-all duration-300 focus:outline-none">
             <span class="text-2xl animate-pulse">🎁</span>
             <span id="notifBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold hidden animate-bounce">!</span>
         </button>
 
-        <!-- Card Popup Menu Mini-Game -->
         <div id="miniGameCard" class="absolute bottom-20 right-0 w-80 sm:w-96 bg-white/95 backdrop-blur-xl border border-slate-100 text-slate-800 rounded-3xl shadow-2xl p-5 hidden transition-all duration-300 transform translate-y-4 opacity-0 z-50">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+            <div class="flex justify-between items-center mb-3 border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-2">
-                    <span class="text-lg">🎮</span>
-                    <h3 class="font-bold text-sm text-indigo-600">Quest & Kotak Misteri</h3>
+                    <span class="text-lg">🎯</span>
+                    <h3 class="font-bold text-sm text-indigo-600">Weekly Mystery Quests</h3>
                 </div>
                 <button id="closeMiniGameBtn" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">&times;</button>
             </div>
 
-            <!-- VIEW 1: Input Nama & Target Quest -->
-            <div id="nameInputView" class="space-y-3">
-                <p class="text-xs text-slate-500">Pilih namamu dan tentukan target quest tabungan barumu:</p>
-                <div>
-                    <label class="block text-xs text-slate-500 mb-1">Nama Kamu</label>
-                    <select id="usernameSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-indigo-600 font-semibold transition">
-                        <option value="LEA">LEA</option>
-                        <option value="MELATI">MELATI</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-500 mb-1">Target Nominal Quest (Rp)</label>
-                    <input type="text" id="targetNominalInput" oninput="formatInputNominal(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-indigo-600 font-semibold transition" placeholder="Cth: 500.000">
-                </div>
-                <button id="startQuestBtn" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs py-3 rounded-xl shadow-md shadow-indigo-100 hover:opacity-95 active:scale-95 transition-all">
-                    Mulai Quest Baru! 🚀
-                </button>
+            <!-- Tab Pilihan -->
+            <div class="flex bg-slate-100 p-1 rounded-2xl mb-4">
+                <button id="tabLeaBtn" onclick="gantiTabQuest('LEA')" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all shadow-sm bg-white text-indigo-600">Quest LEA</button>
+                <button id="tabMelatiBtn" onclick="gantiTabQuest('MELATI')" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500">Quest MELATI</button>
             </div>
 
-            <!-- VIEW 2: Dashboard Progres & Milestone Kotak Misteri -->
-            <div id="dashboardView" class="space-y-4 hidden">
-                <div class="flex justify-between items-center bg-indigo-50/50 px-3 py-2 rounded-xl border border-indigo-100">
-                    <span class="text-[11px] text-indigo-700 font-semibold">👤 Akun Aktif: <strong id="currentUsernameDisplay" class="text-slate-800">-</strong></span>
-                    <button id="switchUserBtn" class="text-[10px] text-slate-400 hover:text-indigo-600 underline font-medium">Ganti Akun</button>
-                </div>
+            <!-- Daftar 5 Misi -->
+            <div id="containerList5Quest" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
 
-                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-700">Progres Quest Kamu</span>
-                        <span id="displayPercentage" class="text-xs font-extrabold text-indigo-600">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden p-0.5">
-                        <div id="progressBar" class="bg-gradient-to-r from-indigo-600 to-violet-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                    <div class="flex justify-between text-[10px] text-slate-400 font-medium">
-                        <span id="displayCurrent">Terkumpul: Rp 0</span>
-                        <span id="displayTarget">Target: Rp 0</span>
-                    </div>
-                </div>
-
-                <!-- Daftar Milestone Kotak Misteri -->
-                <div class="space-y-2">
-                    <span class="text-[11px] font-bold text-slate-700">🎁 Milestone Kotak Misteri:</span>
-                    
-                    <div id="ms25" class="p-2.5 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between text-xs opacity-55 transition-all">
-                        <div>
-                            <p class="font-bold text-slate-700">Level 25% (Perunggu)</p>
-                            <p id="labelMs25" class="text-[10px] text-slate-400">Buka pada: Rp 0</p>
-                        </div>
-                        <button onclick="openMysteryBox(25)" id="btnMs25" class="px-2.5 py-1.5 bg-slate-200 text-slate-500 rounded-xl text-[10px] font-bold cursor-not-allowed transition" disabled>Terkunci 🔒</button>
-                    </div>
-
-                    <div id="ms50" class="p-2.5 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between text-xs opacity-55 transition-all">
-                        <div>
-                            <p class="font-bold text-slate-700">Level 50% (Perak)</p>
-                            <p id="labelMs50" class="text-[10px] text-slate-400">Buka pada: Rp 0</p>
-                        </div>
-                        <button onclick="openMysteryBox(50)" id="btnMs50" class="px-2.5 py-1.5 bg-slate-200 text-slate-500 rounded-xl text-[10px] font-bold cursor-not-allowed transition" disabled>Terkunci 🔒</button>
-                    </div>
-
-                    <div id="ms75" class="p-2.5 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between text-xs opacity-55 transition-all">
-                        <div>
-                            <p class="font-bold text-slate-700">Level 75% (Emas)</p>
-                            <p id="labelMs75" class="text-[10px] text-slate-400">Buka pada: Rp 0</p>
-                        </div>
-                        <button onclick="openMysteryBox(75)" id="btnMs75" class="px-2.5 py-1.5 bg-slate-200 text-slate-500 rounded-xl text-[10px] font-bold cursor-not-allowed transition" disabled>Terkunci 🔒</button>
-                    </div>
-
-                    <div id="ms100" class="p-2.5 rounded-2xl border border-indigo-200 bg-indigo-50/40 flex items-center justify-between text-xs opacity-55 transition-all">
-                        <div>
-                            <p class="font-bold text-indigo-700">⭐ 100% (Sultan Spesial)</p>
-                            <p id="labelMs100" class="text-[10px] text-indigo-500">Buka pada: Rp 0</p>
-                        </div>
-                        <button onclick="openMysteryBox(100)" id="btnMs100" class="px-2.5 py-1.5 bg-slate-200 text-slate-500 rounded-xl text-[10px] font-bold cursor-not-allowed transition" disabled>Terkunci 🔒</button>
-                    </div>
-                </div>
+            <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex justify-between items-center px-1">
+                <span id="timerResetInfo">Reset otomatis setiap 7 hari</span>
+                <span class="font-bold text-indigo-600">5 Misi Aktif</span>
             </div>
         </div>
     </div>
 
-    <!-- Modal Pop-up Hadiah Kotak Misteri -->
+    <!-- Modal Pop-up Hadiah Misi Random -->
     <div id="rewardModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md hidden transition-all duration-300 opacity-0 scale-95 p-4">
         <div class="bg-white border border-indigo-100 w-full max-w-xs rounded-3xl p-6 text-center shadow-2xl space-y-4 relative text-slate-800">
             <div class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-lg shadow-indigo-200 animate-bounce">
-                🎁
+                🎉
             </div>
             <div>
-                <h3 class="text-base font-bold text-indigo-600">Kotak Misteri Terbuka!</h3>
-                <p id="modalCategoryTitle" class="text-[11px] text-slate-400 mt-0.5">Hadiah Milestone Tercapai</p>
+                <h3 class="text-base font-bold text-indigo-600" id="modalRewardTitle">Hadiah Misi Terbuka!</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5" id="modalRewardSub">Hadiah Kejutan Spesial Mingguanmu</p>
                 <div id="modalRewardText" class="bg-slate-50 border border-slate-100 rounded-2xl p-4 my-3 text-xs font-semibold text-slate-700 shadow-inner leading-relaxed">
                     <!-- Teks Hadiah -->
                 </div>
             </div>
             
-            <a id="whatsappLink" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition-colors shadow-lg active:scale-95 flex items-center justify-center space-x-2">
+            <!-- Tombol Tagih WhatsApp (Hanya tampil jika misi sudah diklaim) -->
+            <a id="whatsappLink" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition-colors shadow-lg active:scale-95 flex items-center justify-center space-x-2 hidden">
                 <span>📲 Tagih Hadiah ke WhatsApp</span>
             </a>
 
             <button id="closeModalBtn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition-colors active:scale-95">
-                Tutup / Lanjut Quest
+                Tutup / Selesai
             </button>
         </div>
     </div>
@@ -475,24 +414,27 @@
         let cacheKeluarAkunLeaBulanIni = { "SeaBank": 0, "DANA": 0, "Bank Jatim": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
         let cacheKeluarAkunMelatiBulanIni = { "SeaBank": 0, "DANA": 0, "Mandiri": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
 
-        // Mini-Game & Quest Data LocalStorage
-        let questData = JSON.parse(localStorage.getItem('tabunganKitaQuestData')) || {};
-        let currentUserQuest = localStorage.getItem('tabunganKitaActiveUserQuest') || '';
+        const masterListMisi = [
+            "Nabung minimal Rp 20.000 minggu ini ke pos tabungan.",
+            "Catat minimal 2 transaksi pengeluaran/pemasukan minggu ini.",
+            "Lakukan transfer saldo atau rapikan catatan dompet.",
+            "Pastikan saldo salah satu e-wallet bertambah minggu ini.",
+            "Review kembali pengeluaran agar lebih hemat dari sebelumnya."
+        ];
 
-        const randomRewardsNormal = [
+        const masterListHadiah = [
             "🍜 Minta dibelikan bakso / cilok terdekat sama pasanganmu!",
             "📸 Minta dikirimi foto (PAP) candid muka lucu pasanganmu sekarang juga.",
             "💌 Minta pasanganmu membuat voice note berdurasi 15 detik berisikan gombalan manis.",
             "🧋 Minta dibelikan es teh / boba ukuran medium favorit.",
             "🤗 Minta pelukan hangat virtual / langsung selama 30 detik penuh.",
-            "🍫 Minta dibelikan satu buah cokelat batangan kesukaanmu."
+            "🍫 Minta dibelikan satu buah cokelat batangan kesukaanmu.",
+            "👑 SPESIAL SULTAN: Minta ditraktir makanan porsi favorit berdua!",
+            "🌟 BEBAS: Minta pasanganmu menuruti 1 permintaan kecil tanpa boleh menolak!"
         ];
 
-        const randomRewardsSpecial100 = [
-            "👑 SPESIAL 100%: Minta ditraktir makanan porsi sultan (seperti Pizza / Bakso berdua)!",
-            "🌟 SPESIAL 100%: Bebas meminta pasanganmu menuruti 1 permintaan kecil tanpa boleh menolak selama 24 jam!",
-            "🏆 SPESIAL 100%: Hak Veto memilih film / serial untuk ditonton bersama di kencan berikutnya!"
-        ];
+        let questDataStorage = JSON.parse(localStorage.getItem('tabunganKita5QuestsNew')) || null;
+        let activeQuestTab = 'LEA';
 
         window.onload = async function() {
             setTimeout(() => {
@@ -502,6 +444,7 @@
                 }
             }, 4000);
 
+            inisialisasi5QuestRandomOtomatis();
             ambilData();
 
             try {
@@ -512,100 +455,129 @@
             }
         }
 
-        // Fungsi Perhitungan Saldo Quest Yang Telah Diperbarui (Hanya Transaksi Baru & Kategori Tabungan Murni)
-        function hitungTotalSaldoUser(username) {
-            let total = 0;
-            let qData = questData[username];
-            if (!qData) return 0;
+        function inisialisasi5QuestRandomOtomatis() {
+            let sekarang = Date.now();
+            let satuMingguMs = 7 * 24 * 60 * 60 * 1000;
 
-            let questStartDate = qData.startDate ? new Date(qData.startDate) : new Date(0);
+            if (!questDataStorage || (sekarang - questDataStorage.waktuMulai >= satuMingguMs)) {
+                let generateQuestsForUser = () => {
+                    let listMisiRandom = [...masterListMisi].sort(() => 0.5 - Math.random()).slice(0, 5);
+                    return listMisiRandom.map(misi => {
+                        let randomHadiah = masterListHadiah[Math.floor(Math.random() * masterListHadiah.length)];
+                        return { misi: misi, hadiah: randomHadiah, claimed: false };
+                    });
+                };
 
-            dataTransaksiGlobal.forEach(item => {
-                let namaUser = String(item.namaUser || '').trim().toUpperCase();
-                let isMatch = username === 'MELATI' ? namaUser.includes('MELATI') : !namaUser.includes('MELATI');
-                
-                if (isMatch) {
-                    let txDate = new Date(item.tanggal);
-                    let isAfterStart = txDate >= questStartDate;
-
-                    let kategori = String(item.kategoriDompet || '').trim().toLowerCase();
-                    let sumber = String(item.sumberDompet || '').trim();
-                    let isTabunganMurni = kategori.includes('tabungan murni') || sumber.includes('Tabungan Murni');
-
-                    let jenis = String(item.jenisTransaksi || 'masuk').trim().toLowerCase();
-                    let nom = Number(item.nominal) || 0;
-
-                    if (isAfterStart && jenis === 'masuk' && isTabunganMurni) {
-                        total += nom;
-                    }
-                }
-            });
-            return Math.max(0, total);
+                questDataStorage = {
+                    waktuMulai: sekarang,
+                    LEA: generateQuestsForUser(),
+                    MELATI: generateQuestsForUser()
+                };
+                localStorage.setItem('tabunganKita5QuestsNew', JSON.stringify(questDataStorage));
+            }
+            renderList5Quest();
         }
 
-        function updateUIQuest() {
-            const nameInputView = document.getElementById('nameInputView');
-            const dashboardView = document.getElementById('dashboardView');
-            const notifBadge = document.getElementById('notifBadge');
+        function gantiTabQuest(user) {
+            activeQuestTab = user;
+            const btnLea = document.getElementById('tabLeaBtn');
+            const btnMelati = document.getElementById('tabMelatiBtn');
 
-            if (currentUserQuest && questData[currentUserQuest]) {
-                nameInputView.classList.add('hidden');
-                dashboardView.classList.remove('hidden');
-                document.getElementById('currentUsernameDisplay').innerText = currentUserQuest;
-
-                let qData = questData[currentUserQuest];
-                let currentCollection = hitungTotalSaldoUser(currentUserQuest);
-
-                document.getElementById('displayTarget').innerText = `Target: Rp ${qData.target.toLocaleString('id-ID')}`;
-                document.getElementById('displayCurrent').innerText = `Terkumpul: Rp ${currentCollection.toLocaleString('id-ID')}`;
-
-                let percentage = qData.target > 0 ? Math.min(Math.round((currentCollection / qData.target) * 100), 100) : 0;
-                document.getElementById('displayPercentage').innerText = `${percentage}%`;
-                document.getElementById('progressBar').style.width = `${percentage}%`;
-
-                let hasUnclaimed = false;
-                [25, 50, 75, 100].forEach(milestone => {
-                    let targetMilestone = Math.round((milestone / 100) * qData.target);
-                    document.getElementById(`labelMs${milestone}`).innerText = `Buka pada: Rp ${targetMilestone.toLocaleString('id-ID')}`;
-
-                    let boxEl = document.getElementById(`ms${milestone}`);
-                    let btnEl = document.getElementById(`btnMs${milestone}`);
-                    let isClaimed = qData.claimed[milestone];
-                    let isUnlocked = percentage >= milestone;
-
-                    if (isUnlocked) {
-                        boxEl.classList.remove('opacity-55');
-                        if (!isClaimed) {
-                            boxEl.classList.add('bg-indigo-50/70', 'border-indigo-200', 'animate-pulse');
-                            btnEl.disabled = false;
-                            btnEl.className = "px-2.5 py-1.5 bg-indigo-600 text-white rounded-xl text-[10px] font-bold cursor-pointer hover:bg-indigo-700 active:scale-95 transition";
-                            btnEl.innerText = "Buka Kotak 🎁";
-                            hasUnclaimed = true;
-                        } else {
-                            boxEl.classList.remove('bg-indigo-50/70', 'animate-pulse');
-                            btnEl.disabled = true;
-                            btnEl.className = "px-2.5 py-1.5 bg-slate-100 text-emerald-600 rounded-xl text-[10px] font-bold";
-                            btnEl.innerText = "Sudah Diklaim ✓";
-                        }
-                    } else {
-                        boxEl.classList.add('opacity-55');
-                        btnEl.disabled = true;
-                        btnEl.className = "px-2.5 py-1.5 bg-slate-200 text-slate-400 rounded-xl text-[10px] font-bold cursor-not-allowed";
-                        btnEl.innerText = "Terkunci 🔒";
-                    }
-                });
-
-                if (hasUnclaimed) notifBadge.classList.remove('hidden');
-                else notifBadge.classList.add('hidden');
-
+            if (user === 'LEA') {
+                btnLea.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all shadow-sm bg-white text-indigo-600";
+                btnMelati.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500";
             } else {
-                nameInputView.classList.remove('hidden');
-                dashboardView.classList.add('hidden');
+                btnMelati.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all shadow-sm bg-white text-violet-600";
+                btnLea.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500";
+            }
+            renderList5Quest();
+        }
+
+        function renderList5Quest() {
+            if (!questDataStorage) return;
+            const container = document.getElementById('containerList5Quest');
+            container.innerHTML = '';
+
+            let questsUser = questDataStorage[activeQuestTab];
+
+            questsUser.forEach((q, index) => {
+                container.innerHTML += `
+                    <div class="bg-indigo-50/50 border border-indigo-100 p-3 rounded-2xl flex flex-col gap-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-extrabold uppercase text-indigo-600 bg-indigo-100/60 px-2 py-0.5 rounded-md">Misi ${index + 1}</span>
+                            <span class="text-[10px] font-bold ${q.claimed ? 'text-emerald-600' : 'text-slate-400'}">${q.claimed ? 'Selesai ✓' : 'Belum Klaim'}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-700">${q.misi}</p>
+                        <div class="flex gap-2 pt-1">
+                            <button onclick="lihatHadiahQuest(${index})" class="flex-1 bg-white border border-indigo-200 text-indigo-600 font-bold text-[11px] py-2 rounded-xl hover:bg-indigo-50 active:scale-95 transition">
+                                🎁 Lihat Hadiah
+                            </button>
+                            <button onclick="klaimHadiahQuest(${index})" ${q.claimed ? 'disabled' : ''} class="${q.claimed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-100 hover:opacity-95 active:scale-95'} flex-1 font-bold text-[11px] py-2 rounded-xl transition">
+                                ${q.claimed ? 'Sudah Diklaim' : 'Klaim'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const notifBadge = document.getElementById('notifBadge');
+            let totalUnclaimed = questDataStorage.LEA.filter(q => !q.claimed).length + questDataStorage.MELATI.filter(q => !q.claimed).length;
+            if (totalUnclaimed > 0) {
+                notifBadge.classList.remove('hidden');
+            } else {
                 notifBadge.classList.add('hidden');
             }
+
+            let satuMingguMs = 7 * 24 * 60 * 60 * 1000;
+            let sisaWaktuMs = (questDataStorage.waktuMulai + satuMingguMs) - Date.now();
+            let sisaHari = Math.max(0, Math.ceil(sisaWaktuMs / (1000 * 60 * 60 * 24)));
+            document.getElementById('timerResetInfo').innerText = `Reset dalam: ${sisaHari} hari lagi`;
         }
 
-        // Event listener Mini-Game Widget Toggle
+        window.lihatHadiahQuest = function(index) {
+            let q = questDataStorage[activeQuestTab][index];
+            bukaModalPopupHadiah(q.hadiah, q.claimed);
+        };
+
+        window.klaimHadiahQuest = function(index) {
+            let q = questDataStorage[activeQuestTab][index];
+            if (q.claimed) return;
+
+            q.claimed = true;
+            localStorage.setItem('tabunganKita5QuestsNew', JSON.stringify(questDataStorage));
+            renderList5Quest();
+            bukaModalPopupHadiah(q.hadiah, true);
+        };
+
+        function bukaModalPopupHadiah(hadiahText, isClaimed) {
+            document.getElementById('modalRewardText').innerText = hadiahText;
+            
+            const whatsappBtn = document.getElementById('whatsappLink');
+            const modalTitle = document.getElementById('modalRewardTitle');
+            const modalSub = document.getElementById('modalRewardSub');
+
+            if (isClaimed) {
+                modalTitle.innerText = "Hadiah Misi Berhasil Diklaim!";
+                modalSub.innerText = "Tombol tagih WhatsApp sudah terbuka.";
+                whatsappBtn.classList.remove('hidden');
+
+                const NOMOR_LEA = "6282333967124";
+                const NOMOR_MELATI = "6287769651530";
+                let targetWa = activeQuestTab === 'LEA' ? NOMOR_MELATI : NOMOR_LEA;
+
+                let waMessage = `Sayang (${activeQuestTab}), aku berhasil menyelesaikan misi mingguan dan dapat hadiah: "${hadiahText}" ❤️ Mohon segera ditunaikan ya! 🥰`;
+                whatsappBtn.href = `https://wa.me/${targetWa}?text=${encodeURIComponent(waMessage)}`;
+            } else {
+                modalTitle.innerText = "Hadiah Misi Terbuka!";
+                modalSub.innerText = "Selesaikan & klik Klaim untuk menagihnya!";
+                whatsappBtn.classList.add('hidden');
+            }
+
+            const rewardModal = document.getElementById('rewardModal');
+            rewardModal.classList.remove('hidden');
+            setTimeout(() => rewardModal.classList.remove('opacity-0', 'scale-95'), 10);
+        }
+
         const miniGameBtn = document.getElementById('miniGameBtn');
         const miniGameCard = document.getElementById('miniGameCard');
         const closeMiniGameBtn = document.getElementById('closeMiniGameBtn');
@@ -616,7 +588,7 @@
                 miniGameCard.classList.toggle('translate-y-4', miniGameCard.classList.contains('hidden'));
                 miniGameCard.classList.toggle('opacity-0', miniGameCard.classList.contains('hidden'));
             }, 10);
-            updateUIQuest();
+            renderList5Quest();
         });
 
         closeMiniGameBtn.addEventListener('click', () => {
@@ -624,83 +596,12 @@
             setTimeout(() => miniGameCard.classList.add('hidden'), 300);
         });
 
-        document.getElementById('startQuestBtn').addEventListener('click', () => {
-            let name = document.getElementById('usernameSelect').value;
-            let targetVal = parseFloat(document.getElementById('targetNominalInput').value.replace(/\./g, '').replace(',', '.')) || 0;
-
-            if (targetVal <= 0) {
-                alert('Masukkan target nominal quest yang valid!');
-                return;
-            }
-
-            currentUserQuest = name;
-            localStorage.setItem('tabunganKitaActiveUserQuest', currentUserQuest);
-
-            let todayIsoString = new Date().toISOString();
-
-            if (!questData[currentUserQuest]) {
-                questData[currentUserQuest] = {
-                    target: targetVal,
-                    startDate: todayIsoString,
-                    claimed: { 25: false, 50: false, 75: false, 100: false },
-                    historyRewards: []
-                };
-            } else {
-                questData[currentUserQuest].target = targetVal;
-                if (!questData[currentUserQuest].startDate) {
-                    questData[currentUserQuest].startDate = todayIsoString;
-                }
-            }
-
-            localStorage.setItem('tabunganKitaQuestData', JSON.stringify(questData));
-            document.getElementById('targetNominalInput').value = '';
-            updateUIQuest();
-        });
-
-        document.getElementById('switchUserBtn').addEventListener('click', () => {
-            currentUserQuest = '';
-            localStorage.removeItem('tabunganKitaActiveUserQuest');
-            updateUIQuest();
-        });
-
-        window.openMysteryBox = function(milestone) {
-            if (!currentUserQuest || !questData[currentUserQuest]) return;
-            let qData = questData[currentUserQuest];
-            if (qData.claimed[milestone]) return;
-
-            let rewardList = (milestone === 100) ? randomRewardsSpecial100 : randomRewardsNormal;
-            let availableRewards = rewardList.filter(item => !qData.historyRewards.includes(item));
-            if (availableRewards.length === 0) {
-                qData.historyRewards = [];
-                availableRewards = rewardList;
-            }
-
-            let randomIndex = Math.floor(Math.random() * availableRewards.length);
-            let selectedReward = availableRewards[randomIndex];
-
-            qData.historyRewards.push(selectedReward);
-            qData.claimed[milestone] = true;
-            localStorage.setItem('tabunganKitaQuestData', JSON.stringify(questData));
-
-            document.getElementById('modalCategoryTitle').innerText = `Hadiah Milestone ${milestone}%`;
-            document.getElementById('modalRewardText').innerText = selectedReward;
-
-            let waMessage = `Halo sayang! Aku baru saja membuka Kotak Misteri Milestone ${milestone}% di Quest Tabunganku (${currentUserQuest}). Hadiahku adalah:\n\n"${selectedReward}"\n\nTolong ditunaikan ya cintaku tercinta! 🥰✨`;
-            document.getElementById('whatsappLink').href = `https://wa.me/?text=${encodeURIComponent(waMessage)}`;
-
-            const rewardModal = document.getElementById('rewardModal');
-            rewardModal.classList.remove('hidden');
-            setTimeout(() => rewardModal.classList.remove('opacity-0', 'scale-95'), 10);
-            updateUIQuest();
-        };
-
         document.getElementById('closeModalBtn').addEventListener('click', () => {
             const rewardModal = document.getElementById('rewardModal');
             rewardModal.classList.add('opacity-0', 'scale-95');
             setTimeout(() => rewardModal.classList.add('hidden'), 300);
         });
 
-        // Kode Pendukung Tabungan Asli
         function bukaModalArsipUtama() {
             document.getElementById('filterArsipUser').value = ""; 
             document.getElementById('valFilterArsipUser').innerText = "-- Pilih Nama --";
@@ -1131,7 +1032,8 @@
                 jenisTransaksi: jenisVal,
                 nominal: parseFloat(document.getElementById('nominal').value.replace(/\./g, '').replace(',', '.')) || 0,
                 catatan: catatanVal,
-                tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                timestamp: Date.now()
             };
             
             try {
@@ -1150,7 +1052,6 @@
                     await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: discordData });
                 }
 
-                // Reset form
                 document.getElementById('namaUser').value = "";
                 document.getElementById('valNamaUser').innerText = "-- Pilih yang transaksi --";
                 document.getElementById('valNamaUser').className = "text-slate-700 font-medium";
@@ -1214,7 +1115,7 @@
                 if (dataTransaksiGlobal.length === 0) {
                     listHistori.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada transaksi.</p>`;
                     renderPilihanEwalletInternal();
-                    updateUIQuest();
+                    renderList5Quest();
                     return;
                 }
 
@@ -1304,7 +1205,7 @@
                     renderIsiArsipUtama();
                 }
 
-                updateUIQuest();
+                renderList5Quest();
 
             } catch (error) {
                 if (loadingOverlay) loadingOverlay.classList.add('hidden');
