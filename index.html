@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabungan Kita & Pribadi + 5 Weekly Mystery Quests</title>
+    <title>Tabungan Kita & Pribadi + 7-Day Epic Mystery Quests</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1/dist/face-api.js"></script>
     <style>
@@ -159,14 +159,25 @@
                     <input type="hidden" id="jenisTransaksi" value="">
                 </div>
 
-                <!-- Kolom Bank Tujuan Transfer -->
-                <div id="wrapperBankTujuan" class="hidden transition-all duration-300">
-                    <label class="block text-xs font-semibold text-indigo-600 mb-1">Bank / Akun Tujuan Transfer ⇄</label>
-                    <button type="button" onclick="bukaModalPilihCustom('form_tujuan', 'pilih')" class="w-full border border-indigo-200 rounded-xl p-2.5 text-sm bg-indigo-50/30 flex justify-between items-center text-slate-700 font-medium hover:bg-indigo-50 active:scale-[0.99] transition">
-                        <span id="valBankTujuan">-- Pilih bank tujuan --</span>
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <input type="hidden" id="bankTujuan" value="">
+                <!-- Kolom Bank Tujuan Transfer (Internal / Antar User) -->
+                <div id="wrapperBankTujuan" class="hidden transition-all duration-300 space-y-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-indigo-600 mb-1">Tipe Tujuan Transfer ⇄</label>
+                        <button type="button" onclick="bukaModalPilihCustom('form_tipe_tujuan', 'pilih')" class="w-full border border-indigo-200 rounded-xl p-2.5 text-sm bg-indigo-50/30 flex justify-between items-center text-slate-700 font-medium hover:bg-indigo-50 active:scale-[0.99] transition">
+                            <span id="valTipeTujuan">-- Pilih tipe tujuan --</span>
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <input type="hidden" id="tipeTujuan" value="">
+                    </div>
+
+                    <div id="wrapperPilihBankTujuan" class="hidden">
+                        <label class="block text-xs font-semibold text-indigo-600 mb-1">Bank / Akun Tujuan ⇄</label>
+                        <button type="button" onclick="bukaModalPilihCustom('form_tujuan', 'pilih')" class="w-full border border-indigo-200 rounded-xl p-2.5 text-sm bg-indigo-50/30 flex justify-between items-center text-slate-700 font-medium hover:bg-indigo-50 active:scale-[0.99] transition">
+                            <span id="valBankTujuan">-- Pilih bank tujuan --</span>
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <input type="hidden" id="bankTujuan" value="">
+                    </div>
                 </div>
 
                 <div>
@@ -202,7 +213,7 @@
         </div>
     </div>
 
-    <!-- ================= FLOATING 5 WEEKLY MYSTERY QUESTS ================= -->
+    <!-- ================= FLOATING 7-DAY EPIC MYSTERY QUESTS ================= -->
     <div class="fixed bottom-5 right-5 z-40">
         <button id="miniGameBtn" class="relative flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-600 text-white rounded-full shadow-2xl hover:scale-110 active:scale-95 hover:shadow-indigo-300 transition-all duration-300 focus:outline-none">
             <span class="text-2xl animate-pulse">🎁</span>
@@ -213,23 +224,34 @@
             <div class="flex justify-between items-center mb-3 border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-2">
                     <span class="text-lg">🎯</span>
-                    <h3 class="font-bold text-sm text-indigo-600">Weekly Mystery Quests</h3>
+                    <h3 class="font-bold text-sm text-indigo-600">7-Day Epic Mystery Quests</h3>
                 </div>
                 <button id="closeMiniGameBtn" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">&times;</button>
             </div>
 
-            <!-- Tab Pilihan -->
-            <div class="flex bg-slate-100 p-1 rounded-2xl mb-4">
-                <button id="tabLeaBtn" onclick="gantiTabQuest('LEA')" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all shadow-sm bg-white text-indigo-600">Quest LEA</button>
-                <button id="tabMelatiBtn" onclick="gantiTabQuest('MELATI')" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500">Quest MELATI</button>
+            <!-- Tampilan Awal: Pilih User Terlebih Dahulu Sebelum Buka Misi -->
+            <div id="questAuthContainer" class="py-4 space-y-3">
+                <p class="text-xs text-slate-500 text-center font-medium">Demi keamanan privasi, silakan verifikasi namamu terlebih dahulu untuk membuka quest akunmu:</p>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="pilihUserQuestLogin('LEA')" class="bg-indigo-50 border border-indigo-200 text-indigo-600 font-bold py-3 rounded-2xl text-xs hover:bg-indigo-100 active:scale-95 transition">👤 LEA</button>
+                    <button onclick="pilihUserQuestLogin('MELATI')" class="bg-violet-50 border border-violet-200 text-violet-600 font-bold py-3 rounded-2xl text-xs hover:bg-violet-100 active:scale-95 transition">👤 MELATI</button>
+                </div>
             </div>
 
-            <!-- Daftar 5 Misi -->
-            <div id="containerList5Quest" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
+            <!-- Tampilan Konten Misi (Tampil Setelah Nama Dipilih) -->
+            <div id="questDashboardContainer" class="hidden space-y-3">
+                <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl text-xs">
+                    <span class="font-bold text-slate-600" id="labelActiveQuestUser">Akun: -</span>
+                    <button onclick="gantiUserQuestLogin()" class="text-indigo-600 font-bold text-[10px] underline">Ganti User</button>
+                </div>
+
+                <!-- Daftar 5 Misi 7 Hari -->
+                <div id="containerList5Quest" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+            </div>
 
             <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex justify-between items-center px-1">
-                <span id="timerResetInfo">Reset otomatis setiap 7 hari</span>
-                <span class="font-bold text-indigo-600">5 Misi Aktif</span>
+                <span id="timerResetInfo" class="font-semibold text-rose-500">Reset otomatis setiap Senin</span>
+                <span class="font-bold text-indigo-600">5 Misi Epic</span>
             </div>
         </div>
     </div>
@@ -410,27 +432,55 @@
         let cacheKeluarAkunLeaBulanIni = { "SeaBank": 0, "DANA": 0, "Bank Jatim": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
         let cacheKeluarAkunMelatiBulanIni = { "SeaBank": 0, "DANA": 0, "Mandiri": 0, "Cash/Tunai": 0, "Tabungan Murni": 0 };
 
-        const masterListMisi = [
-            "Nabung minimal Rp 20.000 minggu ini ke pos tabungan.",
-            "Catat minimal 2 transaksi pengeluaran/pemasukan minggu ini.",
-            "Lakukan transfer saldo atau rapikan catatan dompet.",
-            "Pastikan saldo salah satu e-wallet bertambah minggu ini.",
-            "Review kembali pengeluaran agar lebih hemat dari sebelumnya."
+        // Misi Ditingkatkan Kesulitannya (7-Day Epic Quests)
+        const masterListMisi7Hari = [
+            "Konsistensi 7 Hari: Lakukan minimal 5 kali pencatatan transaksi masuk/keluar dalam rentang minggu ini.",
+            "Akumulasi Nabung: Kumpulkan total setoran tabungan minimal Rp 100.000 selama 7 hari berjalan.",
+            "Disiplin Anggaran: Pastikan total pengeluaran pribadi minggu ini tidak melebihi batas wajar.",
+            "Master Arus Kas: Lakukan setidaknya 1 kali penyesuaian atau transfer saldo antar akun dengan lancar.",
+            "Audit Keuangan Bersama: Lakukan pengecekan rekap saldo bersama dan pastikan catatan akurat."
         ];
 
+        // Daftar 28 Hadiah Unik (Kombinasi Virtual, Ketemuan Offline, Apresiasi, & Minimalkan Item Beli-beli)
         const masterListHadiah = [
-            "🍜 Minta dibelikan bakso / cilok terdekat sama pasanganmu!",
-            "📸 Minta dikirimi foto (PAP) candid muka lucu pasanganmu sekarang juga.",
+            // Kategori: Apresiasi & Virtual Romantis (Tanpa Biaya)
             "💌 Minta pasanganmu membuat voice note berdurasi 15 detik berisikan gombalan manis.",
-            "🧋 Minta dibelikan es teh / boba ukuran medium favorit.",
+            "📸 Minta dikirimi foto (PAP) candid muka lucu pasanganmu sekarang juga.",
             "🤗 Minta pelukan hangat virtual / langsung selama 30 detik penuh.",
-            "🍫 Minta dibelikan satu buah cokelat batangan kesukaanmu.",
-            "👑 SPESIAL SULTAN: Minta ditraktir makanan porsi favorit berdua!",
-            "🌟 BEBAS: Minta pasanganmu menuruti 1 permintaan kecil tanpa boleh menolak!"
+            "📱 Minta ditemani video call santai sebelum tidur malam ini tanpa topik berat.",
+            "📜 Minta pasanganmu menuliskan 3 hal kecil yang paling dia sukai dari dirimu.",
+            "🎵 Minta dibuatkan daftar putar (playlist) lagu khusus bertema romantis.",
+            "☕ Minta ditemani ngobrol virtual santai sambil menikmati minuman masing-masing.",
+            "✨ Minta dikirimi pesan penyemangat spesial (chitchat penyemangat pagi).",
+            
+            // Kategori: Rencana Saat Ketemuan Offline (Quality Time / Aktivitas)
+            "🚶‍♂️ Minta ditemani jalan-jalan santai sore hari berdua keliling area sekitar.",
+            "🍳 Minta dimasakkan makanan sederhana hasil masakan dia sendiri saat ketemuan.",
+            "🎬 Minta hak penuh memilih film atau series kesukaan untuk ditonton berdua.",
+            "🎧 Minta ditemani mendengarkan album musik favorit pilihanmu berdua.",
+            "🧹 Minta bantuan kecil atau pijatan ringan di pundak saat badan terasa lelah.",
+            "📸 Minta tolong dipotretkan foto estetik/keren saat kalian sedang jalan berdua.",
+            "📖 Minta dibacakan satu bab buku atau cerita pendek lucu saat senggang.",
+            "🧩 Minta ditemani merakit atau menyelesaikan suatu tantangan game/puzzle berdua.",
+            "🌅 Minta ditemani menikmati momen matahari terbit (sunrise) atau terbenam (sunset) bersama.",
+            
+            // Kategori: Apresiasi Tambahan & Fun Challenge
+            "👑 BEBAS: Minta pasanganmu menuruti 1 permintaan kecil tanpa boleh menolak!",
+            "🎨 Minta pasanganmu menggambar sketsa wajah lucu / karikatur dirimu di kertas.",
+            "🎤 Minta dinyanyikan potongan lagu favoritmu lewat voice note atau langsung.",
+            "🌟 Minta diberikan hak VETO untuk membatalkan satu aturan kecil minggu ini.",
+            "💬 Minta sesi curhat deep talk tanpa gangguan gadget selama 30 menit penuh.",
+            "🗺️ Minta pasanganmu merencanakan satu tempat jalan-jalan hemat untuk kencan berikutnya.",
+            
+            // Kategori Minim (Dibatasi & Ekonomi Ramah)
+            "🍜 Minta dibelikan satu mangkuk bakso / cilok ekonomis terdekat sama pasanganmu!",
+            "🧋 Minta dibelikan satu gelas es teh segar ukuran reguler favoritmu.",
+            "🍫 Minta dibelikan satu buah snack/cokelat batangan mini kesukaanmu.",
+            "👑 SPESIAL SULTAN: Minta ditraktir makanan porsi favorit berdua (opsional jika ada rezeki lebih)!"
         ];
 
-        let questDataStorage = JSON.parse(localStorage.getItem('tabunganKita5QuestsNew')) || null;
-        let activeQuestTab = 'LEA';
+        let questDataStorage = JSON.parse(localStorage.getItem('tabunganKita7DayQuests')) || null;
+        let verifiedQuestUser = localStorage.getItem('tabunganKitaVerifiedUser') || null;
 
         window.onload = async function() {
             setTimeout(() => {
@@ -440,8 +490,9 @@
                 }
             }, 4000);
 
-            inisialisasi5QuestRandomOtomatis();
+            inisialisasi7DayQuestsOtomatis();
             ambilData();
+            CekStatusAuthQuestUI();
 
             try {
                 await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
@@ -451,42 +502,106 @@
             }
         }
 
-        function inisialisasi5QuestRandomOtomatis() {
-            let sekarang = Date.now();
-            let satuMingguMs = 7 * 24 * 60 * 60 * 1000;
+        function getSeninMingguIni(d = new Date()) {
+            let date = new Date(d);
+            let day = date.getDay();
+            let diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            let senin = new Date(date.setDate(diff));
+            senin.setHours(0, 0, 0, 0);
+            return senin.getTime();
+        }
 
-            if (!questDataStorage || (sekarang - questDataStorage.waktuMulai >= satuMingguMs)) {
-                let generateQuestsForUser = () => {
-                    let listMisiRandom = [...masterListMisi].sort(() => 0.5 - Math.random()).slice(0, 5);
-                    return listMisiRandom.map(misi => {
-                        let randomHadiah = masterListHadiah[Math.floor(Math.random() * masterListHadiah.length)];
-                        return { misi: misi, hadiah: randomHadiah, claimed: false };
-                    });
-                };
+        // Fungsi Mengacak Array Tanpa Duplikat (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
 
+        function inisialisasi7DayQuestsOtomatis() {
+            let sekarang = new Date();
+            let seninIniMs = getSeninMingguIni(sekarang);
+
+            let generateQuestsForUser = () => {
+                // Ambil salinan master hadiah dan acak agar benar-benar random dan tidak ada duplikat per misi
+                let shuffledHadiah = shuffleArray([...masterListHadiah]);
+                
+                return masterListMisi7Hari.map((misi, index) => {
+                    return { 
+                        misi: misi, 
+                        hadiah: shuffledHadiah[index % shuffledHadiah.length], 
+                        claimed: false 
+                    };
+                });
+            };
+
+            if (!questDataStorage || questDataStorage.waktuMulai < seninIniMs) {
                 questDataStorage = {
-                    waktuMulai: sekarang,
+                    waktuMulai: seninIniMs,
                     LEA: generateQuestsForUser(),
                     MELATI: generateQuestsForUser()
                 };
-                localStorage.setItem('tabunganKita5QuestsNew', JSON.stringify(questDataStorage));
+                localStorage.setItem('tabunganKita7DayQuests', JSON.stringify(questDataStorage));
             }
+        }
+
+        function pilihUserQuestLogin(user) {
+            verifiedQuestUser = user;
+            localStorage.setItem('tabunganKitaVerifiedUser', user);
+            CekStatusAuthQuestUI();
             renderList5Quest();
         }
 
-        function gantiTabQuest(user) {
-            activeQuestTab = user;
-            const btnLea = document.getElementById('tabLeaBtn');
-            const btnMelati = document.getElementById('tabMelatiBtn');
+        function gantiUserQuestLogin() {
+            verifiedQuestUser = null;
+            localStorage.removeItem('tabunganKitaVerifiedUser');
+            CekStatusAuthQuestUI();
+        }
 
-            if (user === 'LEA') {
-                btnLea.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all shadow-sm bg-white text-indigo-600";
-                btnMelati.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500";
+        function CekStatusAuthQuestUI() {
+            const authContainer = document.getElementById('questAuthContainer');
+            const dashboardContainer = document.getElementById('questDashboardContainer');
+            const labelUser = document.getElementById('labelActiveQuestUser');
+
+            if (verifiedQuestUser) {
+                authContainer.classList.add('hidden');
+                dashboardContainer.classList.remove('hidden');
+                labelUser.innerText = `Akun Aktif: ${verifiedQuestUser} (Terkunci & Aman)`;
             } else {
-                btnMelati.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all shadow-sm bg-white text-violet-600";
-                btnLea.className = "flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500";
+                authContainer.classList.remove('hidden');
+                dashboardContainer.classList.add('hidden');
             }
-            renderList5Quest();
+        }
+
+        function cekApakahSyaratMisiTerpenuhi(indexMisi, user) {
+            let sekarangMs = Date.now();
+            let seninIniMs = getSeninMingguIni(new Date(sekarangMs));
+
+            let transaksiMingguIniUser = dataTransaksiGlobal.filter(item => {
+                let namaUser = String(item.namaUser || '').trim().toUpperCase();
+                let matchUser = user === 'MELATI' ? namaUser.includes('MELATI') : !namaUser.includes('MELATI');
+                let waktuTx = item.timestamp || new Date(item.tanggal).getTime() || 0;
+                return matchUser && waktuTx >= seninIniMs;
+            });
+
+            if (indexMisi === 0) {
+                return transaksiMingguIniUser.length >= 5;
+            } else if (indexMisi === 1) {
+                let totalSetoran = 0;
+                transaksiMingguIniUser.forEach(item => {
+                    let jenis = String(item.jenisTransaksi || '').trim().toLowerCase();
+                    if (jenis === 'masuk') {
+                        totalSetoran += Number(item.nominal) || 0;
+                    }
+                });
+                return totalSetoran >= 100000;
+            } else {
+                return transaksiMingguIniUser.length >= 3;
+            }
         }
 
         function renderList5Quest() {
@@ -494,21 +609,25 @@
             const container = document.getElementById('containerList5Quest');
             container.innerHTML = '';
 
-            let questsUser = questDataStorage[activeQuestTab];
+            let userAktif = verifiedQuestUser || 'LEA';
+            let questsUser = questDataStorage[userAktif];
 
             questsUser.forEach((q, index) => {
+                let syaratTerpenuhi = cekApakahSyaratMisiTerpenuhi(index, userAktif);
+                let bisaKlaim = syaratTerpenuhi && !q.claimed && verifiedQuestUser !== null;
+
                 container.innerHTML += `
                     <div class="bg-indigo-50/50 border border-indigo-100 p-3 rounded-2xl flex flex-col gap-2">
                         <div class="flex justify-between items-start">
-                            <span class="text-[10px] font-extrabold uppercase text-indigo-600 bg-indigo-100/60 px-2 py-0.5 rounded-md">Misi ${index + 1}</span>
-                            <span class="text-[10px] font-bold ${q.claimed ? 'text-emerald-600' : 'text-slate-400'}">${q.claimed ? 'Selesai ✓' : 'Belum Klaim'}</span>
+                            <span class="text-[10px] font-extrabold uppercase text-indigo-600 bg-indigo-100/60 px-2 py-0.5 rounded-md">Misi Epic ${index + 1} (7 Hari)</span>
+                            <span class="text-[10px] font-bold ${q.claimed ? 'text-emerald-600' : (syaratTerpenuhi ? 'text-indigo-600 animate-pulse' : 'text-slate-400')}">${q.claimed ? 'Selesai ✓' : (syaratTerpenuhi ? 'Siap Diklaim!' : 'Belum Memenuhi Syarat')}</span>
                         </div>
                         <p class="text-xs font-semibold text-slate-700">${q.misi}</p>
                         <div class="flex gap-2 pt-1">
                             <button onclick="lihatHadiahQuest(${index})" class="flex-1 bg-white border border-indigo-200 text-indigo-600 font-bold text-[11px] py-2 rounded-xl hover:bg-indigo-50 active:scale-95 transition">
                                 🎁 Lihat Hadiah
                             </button>
-                            <button onclick="klaimHadiahQuest(${index})" ${q.claimed ? 'disabled' : ''} class="${q.claimed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-100 hover:opacity-95 active:scale-95'} flex-1 font-bold text-[11px] py-2 rounded-xl transition">
+                            <button onclick="klaimHadiahQuest(${index})" ${!bisaKlaim ? 'disabled' : ''} class="${q.claimed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : (bisaKlaim ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-100 hover:opacity-95 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed')} flex-1 font-bold text-[11px] py-2 rounded-xl transition">
                                 ${q.claimed ? 'Sudah Diklaim' : 'Klaim'}
                             </button>
                         </div>
@@ -517,30 +636,63 @@
             });
 
             const notifBadge = document.getElementById('notifBadge');
-            let totalUnclaimed = questDataStorage.LEA.filter(q => !q.claimed).length + questDataStorage.MELATI.filter(q => !q.claimed).length;
-            if (totalUnclaimed > 0) {
+            let totalUnclaimedUnlocks = 0;
+            if (verifiedQuestUser) {
+                totalUnclaimedUnlocks = questDataStorage[verifiedQuestUser].filter((q, idx) => !q.claimed && cekApakahSyaratMisiTerpenuhi(idx, verifiedQuestUser)).length;
+            }
+            if (totalUnclaimedUnlocks > 0) {
                 notifBadge.classList.remove('hidden');
             } else {
                 notifBadge.classList.add('hidden');
             }
 
-            let satuMingguMs = 7 * 24 * 60 * 60 * 1000;
-            let sisaWaktuMs = (questDataStorage.waktuMulai + satuMingguMs) - Date.now();
-            let sisaHari = Math.max(0, Math.ceil(sisaWaktuMs / (1000 * 60 * 60 * 24)));
-            document.getElementById('timerResetInfo').innerText = `Reset dalam: ${sisaHari} hari lagi`;
+            let sekarangMs = Date.now();
+            let seninDepanMs = questDataStorage.waktuMulai + (7 * 24 * 60 * 60 * 1000);
+            let sisaWaktuMs = seninDepanMs - sekarangMs;
+
+            if (sisaWaktuMs <= 0) {
+                inisialisasi7DayQuestsOtomatis();
+                renderList5Quest();
+                return;
+            }
+
+            let sisaHari = Math.floor(sisaWaktuMs / (1000 * 60 * 60 * 24));
+            let sisaJam = Math.floor((sisaWaktuMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let sisaMenit = Math.floor((sisaWaktuMs % (1000 * 60 * 60)) / (1000 * 60));
+            let sisaDetik = Math.floor((sisaWaktuMs % (1000 * 60)) / 1000);
+
+            document.getElementById('timerResetInfo').innerText = `Reset: ${sisaHari}h ${sisaJam}j ${sisaMenit}m ${sisaDetik}d lagi (Senin)`;
         }
 
+        setInterval(() => {
+            if (questDataStorage) {
+                let miniGameCard = document.getElementById('miniGameCard');
+                if (miniGameCard && !miniGameCard.classList.contains('hidden')) {
+                    renderList5Quest();
+                }
+            }
+        }, 1000);
+
         window.lihatHadiahQuest = function(index) {
-            let q = questDataStorage[activeQuestTab][index];
+            if (!verifiedQuestUser) { alert('Verifikasi nama terlebih dahulu!'); return; }
+            let q = questDataStorage[verifiedQuestUser][index];
             bukaModalPopupHadiah(q.hadiah, q.claimed);
         };
 
         window.klaimHadiahQuest = function(index) {
-            let q = questDataStorage[activeQuestTab][index];
+            if (!verifiedQuestUser) { alert('Verifikasi nama terlebih dahulu!'); return; }
+            
+            let syaratTerpenuhi = cekApakahSyaratMisiTerpenuhi(index, verifiedQuestUser);
+            if (!syaratTerpenuhi) {
+                alert('Syarat misi ini belum terpenuhi! Lakukan pencatatan transaksi atau tabungan sesuai instruksi misi terlebih dahulu.');
+                return;
+            }
+
+            let q = questDataStorage[verifiedQuestUser][index];
             if (q.claimed) return;
 
             q.claimed = true;
-            localStorage.setItem('tabunganKita5QuestsNew', JSON.stringify(questDataStorage));
+            localStorage.setItem('tabunganKita7DayQuests', JSON.stringify(questDataStorage));
             renderList5Quest();
             bukaModalPopupHadiah(q.hadiah, true);
         };
@@ -559,13 +711,13 @@
 
                 const NOMOR_LEA = "6282333967124";
                 const NOMOR_MELATI = "6287769651530";
-                let targetWa = activeQuestTab === 'LEA' ? NOMOR_MELATI : NOMOR_LEA;
+                let targetWa = verifiedQuestUser === 'LEA' ? NOMOR_MELATI : NOMOR_LEA;
 
-                let waMessage = `Sayang (${activeQuestTab}), aku berhasil menyelesaikan misi mingguan dan dapat hadiah: "${hadiahText}" ❤️ Mohon segera ditunaikan ya! 🥰`;
+                let waMessage = `Sayang (${verifiedQuestUser}), aku berhasil menyelesaikan misi 7 hari dan dapat hadiah epic: "${hadiahText}" ❤️ Mohon segera ditunaikan ya! 🥰`;
                 whatsappBtn.href = `https://wa.me/${targetWa}?text=${encodeURIComponent(waMessage)}`;
             } else {
                 modalTitle.innerText = "Hadiah Misi Terbuka!";
-                modalSub.innerText = "Selesaikan & klik Klaim untuk menagihnya!";
+                modalSub.innerText = "Selesaikan syarat misi & capai target sebelum tombol klaim terbuka!";
                 whatsappBtn.classList.add('hidden');
             }
 
@@ -584,6 +736,7 @@
                 miniGameCard.classList.toggle('translate-y-4', miniGameCard.classList.contains('hidden'));
                 miniGameCard.classList.toggle('opacity-0', miniGameCard.classList.contains('hidden'));
             }, 10);
+            CekStatusAuthQuestUI();
             renderList5Quest();
         });
 
@@ -783,13 +936,28 @@
                 if (!userVal) { alert('Pilih nama user terlebih dahulu!'); return; }
                 judul = "Pilih Sumber Akun (Asal)";
                 listOpsi = userVal === 'LEA' ? akunLea : akunMelati;
+            } else if (target === 'form_tipe_tujuan') {
+                judul = "Pilih Tipe Tujuan Transfer";
+                listOpsi = [
+                    { label: "Transfer ke Akun Sendiri (Internal)", val: "internal" },
+                    { label: "Transfer ke Akun User Lain (Antar User)", val: "antar_user" }
+                ];
             } else if (target === 'form_tujuan') {
                 let userVal = document.getElementById('namaUser').value;
                 let sumberVal = document.getElementById('sumberDompet').value;
-                judul = "Pilih Akun Tujuan";
-                let daftarAkun = userVal === 'LEA' ? akunLea : akunMelati;
-                listOpsi = daftarAkun.filter(acc => acc !== sumberVal);
-                if (listOpsi.length === 0) listOpsi = daftarAkun;
+                let tipeTujuan = document.getElementById('tipeTujuan').value;
+
+                if (tipeTujuan === 'antar_user') {
+                    judul = "Pilih Bank/Akun User Lain";
+                    let userLain = userVal === 'LEA' ? 'MELATI' : 'LEA';
+                    let daftarAkunLain = userVal === 'LEA' ? akunMelati : akunLea;
+                    listOpsi = daftarAkunLain.map(acc => `${userLain} - ${acc}`);
+                } else {
+                    judul = "Pilih Akun Sendiri";
+                    let daftarAkun = userVal === 'LEA' ? akunLea : akunMelati;
+                    listOpsi = daftarAkun.filter(acc => acc !== sumberVal);
+                    if (listOpsi.length === 0) listOpsi = daftarAkun;
+                }
             } else if (target === 'form_jenis') {
                 judul = "Pilih Jenis Transaksi";
                 listOpsi = [
@@ -842,6 +1010,8 @@
                 document.getElementById('valNamaUser').className = "text-slate-800 font-semibold";
                 document.getElementById('sumberDompet').value = "";
                 document.getElementById('valSumberDompet').innerText = "-- Pilih sumber atau pos tabungan --";
+                document.getElementById('tipeTujuan').value = "";
+                document.getElementById('valTipeTujuan').innerText = "-- Pilih tipe tujuan --";
                 document.getElementById('bankTujuan').value = "";
                 document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
             } else if (targetModalCustom === 'form_kategori') {
@@ -852,6 +1022,14 @@
                 document.getElementById('sumberDompet').value = val;
                 document.getElementById('valSumberDompet').innerText = label;
                 document.getElementById('valSumberDompet').className = "text-slate-800 font-semibold";
+            } else if (targetModalCustom === 'form_tipe_tujuan') {
+                document.getElementById('tipeTujuan').value = val;
+                document.getElementById('valTipeTujuan').innerText = label;
+                document.getElementById('valTipeTujuan').className = "text-slate-800 font-semibold";
+                
+                document.getElementById('bankTujuan').value = "";
+                document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
+                document.getElementById('wrapperPilihBankTujuan').classList.remove('hidden');
             } else if (targetModalCustom === 'form_tujuan') {
                 document.getElementById('bankTujuan').value = val;
                 document.getElementById('valBankTujuan').innerText = label;
@@ -866,8 +1044,11 @@
                     wrapperTujuan.classList.remove('hidden');
                 } else {
                     wrapperTujuan.classList.add('hidden');
+                    document.getElementById('tipeTujuan').value = "";
+                    document.getElementById('valTipeTujuan').innerText = "-- Pilih tipe tujuan --";
                     document.getElementById('bankTujuan').value = "";
                     document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
+                    document.getElementById('wrapperPilihBankTujuan').classList.add('hidden');
                 }
             }
             tutupModalPilihCustom();
@@ -1064,9 +1245,12 @@
                 document.getElementById('valJenisTransaksi').innerText = "-- Pilih jenis transaksi --";
                 document.getElementById('valJenisTransaksi').className = "text-slate-700 font-medium";
 
+                document.getElementById('tipeTujuan').value = "";
+                document.getElementById('valTipeTujuan').innerText = "-- Pilih tipe tujuan --";
                 document.getElementById('bankTujuan').value = "";
                 document.getElementById('valBankTujuan').innerText = "-- Pilih bank tujuan --";
                 document.getElementById('wrapperBankTujuan').classList.add('hidden');
+                document.getElementById('wrapperPilihBankTujuan').classList.add('hidden');
 
                 document.getElementById('nominal').value = '';
                 document.getElementById('catatan').value = '';
@@ -1150,8 +1334,13 @@
                                     }
                                 } else if (jenis === 'transfer_saldo') {
                                     cacheSaldoAkunMelati[akunAsal] -= nom;
-                                    if (akunTujuan && cacheSaldoAkunMelati[akunTujuan] !== undefined) {
-                                        cacheSaldoAkunMelati[akunTujuan] += nom;
+                                    if (akunTujuan) {
+                                        let cleanTujuan = akunTujuan.includes('-') ? akunTujuan.split('-')[1].trim() : akunTujuan;
+                                        if (akunTujuan.startsWith('LEA') && cacheSaldoAkunLea[cleanTujuan] !== undefined) {
+                                            cacheSaldoAkunLea[cleanTujuan] += nom;
+                                        } else if (cacheSaldoAkunMelati[cleanTujuan] !== undefined) {
+                                            cacheSaldoAkunMelati[cleanTujuan] += nom;
+                                        }
                                     }
                                 }
                             }
@@ -1166,8 +1355,13 @@
                                     }
                                 } else if (jenis === 'transfer_saldo') {
                                     cacheSaldoAkunLea[akunAsal] -= nom;
-                                    if (akunTujuan && cacheSaldoAkunLea[akunTujuan] !== undefined) {
-                                        cacheSaldoAkunLea[akunTujuan] += nom;
+                                    if (akunTujuan) {
+                                        let cleanTujuan = akunTujuan.includes('-') ? akunTujuan.split('-')[1].trim() : akunTujuan;
+                                        if (akunTujuan.startsWith('MELATI') && cacheSaldoAkunMelati[cleanTujuan] !== undefined) {
+                                            cacheSaldoAkunMelati[cleanTujuan] += nom;
+                                        } else if (cacheSaldoAkunLea[cleanTujuan] !== undefined) {
+                                            cacheSaldoAkunLea[cleanTujuan] += nom;
+                                        }
                                     }
                                 }
                             }
